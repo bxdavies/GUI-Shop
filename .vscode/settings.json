@@ -1,0 +1,24 @@
+{
+    "spellright.language": [
+        "en_GB"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "python",
+        "shellscript"
+    ],
+    "spellright.ignoreFiles": [
+
+        "**/.gitignore",
+        "**/.spellignore",
+        "**/.settings.json",
+        "**/.env"
+    ],
+    "spellright.ignoreRegExps": [
+        "/(\".*\")/g"
+    ],
+    "files.exclude": {
+        "**/.vscode": true,
+        "**/__pycache__": true
+    }
+}
