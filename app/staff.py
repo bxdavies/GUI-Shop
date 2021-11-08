@@ -9,10 +9,35 @@ import requests
 from io import BytesIO
 import textwrap
 
+#############
+# Wrap Text #
+##############
 def wrapText(text, size=30):
+    '''
+    Function to convert long strings to wraped text
+
+    Parameters:
+        text: The text to convert to wraped text (str)
+        size: The max width of a line of text (int)
+    Returns:
+        A string with newlines in (str)
+    '''
+
     return "\n".join(textwrap.wrap(text, size))
 
+################
+# URL To Image #
+################
 def urlToImage(url):
+    '''
+    Converts a URL to a PNG Image that PySimpleGUI can understand
+    
+    Parameters:
+        url: The url of the image to convert
+
+    Returns:
+        Image Data
+    '''
     response = requests.get(url, stream=True)
     response.raw.decode_content = True
     img = ImageQt.Image.open(response.raw)
