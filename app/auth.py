@@ -3,7 +3,7 @@
 #############
 import PySimpleGUI as sg
 from datetime import datetime
-
+from password_strength import PasswordPolicy
 ################
 # Module Files #
 ################
@@ -11,6 +11,15 @@ from app import models, main
 
 # Database Session #
 session = models.Session()
+
+
+policy = PasswordPolicy.from_names(
+    length=8,  # min length: 8
+    uppercase=1,  # need min. 2 uppercase letters
+    numbers=2,  # need min. 2 digits
+    special=1,  # need min. 2 special characters
+    nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
+)
 
 
 ##################
@@ -23,8 +32,9 @@ def login():
     layout = [
         [sg.Text('Login', font='Any 30', justification='center', expand_x=True)],
         [sg.Text('Please login using your email address and password...', justification='center', expand_x=True)],
-        [sg.Text('Email Address:', size=(15, 1)), sg.InputText(key="-emailaddress-")],
-        [sg.Text('Password:', size=(15, 1)), sg.InputText(key="-password-", password_char='*')],
+        [sg.Text('Email Address:', size=(22, 1)), sg.InputText(key="-emailaddress-", size=(40, 1))],
+        [sg.Text('Date of Birth (DD MM YY):', size=(22, 1)), sg.Input(key="-dob-", size=(30, 1)), sg.CalendarButton('Date', format='%d %m %Y', locale="en_GB.utf8'")],
+        [sg.Text('Password:', size=(22, 1)), sg.InputText(key="-password-", size=(40, 1) ,password_char='*')],
         [sg.Text('', key="-error-", text_color='red')],
         [sg.Button('Login!', key='-login-')],
         [sg.HorizontalSeparator(pad=(10, 10))],
@@ -63,14 +73,21 @@ def login():
 
                     # Check if customer exists
                     if customer is not None:
-
+                        
+                        # Convert user input date to date object
+                        dob = datetime.strptime(values["-dob-"], '%d %m %Y').date()
+                        
                         # If passwords match then show the Customer Home window
-                        if customer.checkPassword(values["-password-"]):
+                        if customer.checkPassword(values["-password-"]) and customer.dob == dob:
                             window.close()
                             main.customerHome(customer.id)
 
+                        # If date does not match then show an error
+                        elif customer.dob != dob:
+                            window["-error-"].update('Your DOB is incorrect!')
+                        
                         # If passwords don't match then show an error
-                        else:
+                        elif customer.checkPassword(values["-password-"]) is False:
                             window["-error-"].update('Your password is incorrect!')
 
                     # If customer does not exist then show an error
@@ -137,7 +154,22 @@ def signup():
                         if f'Enter your {valueName.capitalize()}!' in errors:
                             errors.remove(f'Enter your {valueName.capitalize()}!')
                             window["-error-"].update("\n".join(errors))
+                    
+                    # Check password strength
+                    passwordStrength = policy.test(values["-password-"])
 
+                    # If password strength is empty then remove error from error list
+                    if not passwordStrength:
+                        if 'Password is not complex enough!' in errors:
+                            errors.remove('Password is not complex enough!')
+                            window["-error-"].update("\n".join(errors))
+
+                    # If list is not empty then show an error
+                    else:
+                        if 'Password is not complex enough!' not in errors:
+                            errors.append('Password is not complex enough!')
+                            window["-error-"].update("\n".join(errors))
+                        
                     # If passwords do not match show an error
                     if values["-password-"] != values["-confirmpassword-"]:
                         if 'Passwords do not match!' not in errors:

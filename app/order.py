@@ -9,6 +9,10 @@ import json
 import io
 import os
 import webbrowser
+from PIL import ImageQt
+import requests
+from io import BytesIO
+import textwrap
 
 ################
 # Module Files #
@@ -40,7 +44,18 @@ def convertToBytes(img):
 
     # Return the image Bytes Value
     return bio.getvalue()
-    
+
+def wrapText(text, size=30):
+    return "\n".join(textwrap.wrap(text, size))
+
+def urlToImage(url):
+    response = requests.get(url, stream=True)
+    response.raw.decode_content = True
+    img = ImageQt.Image.open(response.raw)
+    with BytesIO() as output:
+        img.save(output, format="PNG")
+        data = output.getvalue()
+    return data
 
 ########
 # Shop #
@@ -92,8 +107,8 @@ def shop(customerID, category, cart):
                 # Add Product Details to Product Column 2
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
-                productsCol2.append([sg.Image(f'app/images/products/{product.image}', size=(200, 200))])
-                productsCol2.append([sg.Text(product.description)])
+                productsCol2.append([sg.Image(urlToImage(product.image), size=(200, 200))])
+                productsCol2.append([sg.Text(wrapText(product.description, 60))])
                 productsCol2.append([sg.Text(product.category.name), sg.Text(product.stock)])
                 productsCol2.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
             else:
@@ -101,8 +116,8 @@ def shop(customerID, category, cart):
                 # Add Product Details to Product Column 1
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
-                productsCol1.append([sg.Image(f'app/images/products/{product.image}', size=(200, 200))])
-                productsCol1.append([sg.Text(product.description)])
+                productsCol1.append([sg.Image(urlToImage(product.image), size=(200, 200))])
+                productsCol1.append([sg.Text(wrapText(product.description, 60))])
                 productsCol1.append([sg.Text(product.category.name), sg.Text(product.stock)])
                 productsCol1.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
                 
@@ -123,8 +138,8 @@ def shop(customerID, category, cart):
                 # Add Product Details to Product Column 2
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
-                productsCol2.append([sg.Image(f'app/images/products/{product.image}', size=(200, 200))])
-                productsCol2.append([sg.Text(product.description)])
+                productsCol2.append([sg.Image(urlToImage(product.image), size=(200, 200))])
+                productsCol2.append([sg.Text(wrapText(product.description, 60))])
                 productsCol2.append([sg.Text(product.category.name), sg.Text(product.stock)])
                 productsCol2.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
             else:
@@ -132,8 +147,8 @@ def shop(customerID, category, cart):
                 # Add Product Details to Product Column 1
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
-                productsCol1.append([sg.Image(f'app/images/products/{product.image}', size=(200, 200))])
-                productsCol1.append([sg.Text(product.description)])
+                productsCol1.append([sg.Image(urlToImage(product.image), size=(200, 200))])
+                productsCol1.append([sg.Text(wrapText(product.description, 60))])
                 productsCol1.append([sg.Text(product.category.name), sg.Text(product.stock)])
                 productsCol1.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
 
@@ -151,6 +166,9 @@ def shop(customerID, category, cart):
         [sg.Text(categoryDescriptionToShow)]
     ]
 
+    productsCol = [
+        [sg.Column(productsCol1, key="-productsCol1-" ,expand_x=True, element_justification='center', vertical_alignment='top'), sg.Column(productsCol2, expand_x=True, element_justification='center', vertical_alignment='top')],
+    ]
     # Define Cart Column Layout
     cartCol =  [
         [sg.Button('', key="-cart-", image_size=(48, 48), image_data=b'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACLklEQVRoge3YTYhNcRjH8Y+bhTCikViiLKyIlcxQM0oWbGjs7GxkzUJZ0DTZ2lDkbUGkpryUWEmTYjRWIyVlISszTJTXsXjOje64zLj//z2jzreexe3cfs/vec7T/zznUFFRUTFbmWyI71hZqqMZcvqXOCuKOFyqoxZ5hqdlm2iFk6aOVbtiIkUBOwuxYQy0MZ7gRYoCOvAZ91OIzYBrGEol9gCfMD+V4DQYwmAqsaNijHpSCU6DV+IkTMImUcCxVIJ/oSbGNlm+uRgXo9QOVoiGHUwpOii6siClaBM2igL6UooeKES3pRRtwq4i19aUomsK0f6Uok2oN2ttauGXEp7Nf6BfFNCZWvgMvoiHW04uFHlqqYX7RGe2pxZu4B5e5xDuxDexq+RkFCO5xIfxMJd4wXvcySU+IOZzUYs6S7ABe3BIrA13xehM4lKL+k3pKRLsmMZ/l4k1ZJ9YCy7jEcZM3f3H8BhXcBxdqY3XmYcPOFH8buzkxcLI+G9Mvi2uXRV3cj96sQpzchlupFO8Zk4U0WjyjdiZzuEI9orVYHG7DDajQ3S9bnoU58UL/26sw8KyzP2N1XgujF/H+nLtzIzl4uXio8TbYbu4JY7N3rKN/AubxdjkfvJm4xS+YmnZRv6VEXF2t/N7UGO0xDvlfZWrR8vUsAXdMuznuXPVcNvPbtxMJdyuXN2m3tJcS1aWXP99ATVxK+uCN+QdoSy5aqITXakEZ0muioqKihb4AbCd8/afwF4IAAAAAElFTkSuQmCC')]
@@ -160,7 +178,7 @@ def shop(customerID, category, cart):
     layout = [
         [sg.Text('Shop', font='Any 30', justification='center', expand_x=True)],
         [sg.Column(categoryCol, justification='left', expand_x=True, element_justification='left', vertical_alignment='center',), sg.Column(cartCol, justification='right', expand_y=True, expand_x=True, element_justification='right')],
-        [sg.Column(productsCol1, vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top'), sg.Column(productsCol2, vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top')],
+        [sg.Column(productsCol, size=(800, 800), scrollable=True, vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top')],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
