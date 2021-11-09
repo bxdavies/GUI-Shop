@@ -31,9 +31,24 @@ class Customer(Base):
     password = Column(String(255), nullable=False)
 
     def setPassword(self, password):
+        '''
+        Hash Password
+
+        Parameters:
+            password: The password to hash
+        '''
         self.password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     def checkPassword(self, password):
+        '''
+        Checked Hashed Password
+
+        Parameters:
+            password: The password to check against
+
+        Returns:
+            boolean
+        '''
         return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
 class Staff(Base):

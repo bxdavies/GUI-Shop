@@ -592,24 +592,29 @@ def edit(customerID, orderID):
         'order': order.id
     }
 
-    subOrders = session.query(models.SubOrder).filter(models.SubOrder.order == order).all()
-    orderTable = []
+    # Create QRCode object from JSON
+    orderQRCode = qrcode.make(json.dumps(orderJSON))
 
+    # Get Order Details
+    subOrders = session.query(models.SubOrder).filter(models.SubOrder.order == order).all()
+
+    # Add Order Details to order table
+    orderTable = []
     for subOrder in subOrders:
         orderTable.append([subOrder.product.name, f'£{subOrder.product.price}' ,subOrder.product_quantity, f'£{subOrder.product.price*subOrder.product_quantity}'])
 
+    # Set VAT, subTotal and Total Variables
     vat = round(order.total * Decimal('0.20'), 2)
     vat = f'£{vat}'
     subTotal = f'£{order.sub_total}'
     total =  f'£{order.total}'
 
+    # Add this infomation to a dictonary for later
     moneyInfomation = {
         "sub_total": subTotal,
         "vat": vat,
         "total": total
     }
-    # Create QRCode object from JSON
-    orderQRCode = qrcode.make(json.dumps(orderJSON))
 
     # Define a group of Buttons
     buttons = [
