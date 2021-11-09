@@ -28,6 +28,7 @@ def urlToImage(url):
 def qrCodeScanner():
     ''' Scan a QR Code and display the booking or order '''
 
+    # Database Session 
     session = models.Session()
 
     layout = [
@@ -74,7 +75,7 @@ def qrCodeScanner():
                 sg.popup(nicstring)
                 break
             elif 'order' in dataDict:
-                print(dataDict['order'])
+                orderDetails(dataDict['order'])
 
         imgbytes = cv2.imencode('.png', frame)[1].tobytes()  # ditto
         window['image'].update(data=imgbytes)
@@ -88,6 +89,7 @@ def qrCodeScanner():
 def showBookings():
     ''' Show a table of bookings '''
 
+    # Database Session 
     session = models.Session()
 
     bookingsList = []
@@ -127,7 +129,11 @@ def showBookings():
 
 
 def showOrders():
+    ''' 
+    Show All Customer Orders
+    '''
 
+    # Database Session 
     session = models.Session()
 
     ordersList = []
@@ -142,6 +148,7 @@ def showOrders():
         [sg.Text('Customer Orders', font='Any 30', justification='center', expand_x=True)],
         [sg.Text('Show all customer orders',  justification='center', expand_x=True)],
         [sg.Table(values=ordersList, headings=['ID', 'Customer Name','Date and Time'], enable_click_events=True, key="-bookings-")],
+        [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
@@ -161,7 +168,15 @@ def showOrders():
     window.close()
 
 def orderDetails(orderID):
+    ''' 
+    Edit / Show Order
 
+    Parameters:
+        orderID: Order ID (int)
+
+    '''
+
+    # Database Session 
     session = models.Session()
 
     order = session.query(models.Order).filter(models.Order.id == orderID).first()
@@ -369,6 +384,7 @@ def listProducts(category):
     window.close()
 
 def listCategories():
+    ''' List all categories '''
 
     session = models.Session()
 
@@ -408,7 +424,9 @@ def listCategories():
     window.close()
 
 def addProduct():
+    ''' Add Product '''
 
+    # Database Session 
     session = models.Session()
 
     categories = []
@@ -451,6 +469,9 @@ def addProduct():
      
 
 def addCategory():
+    ''' Add a category '''
+
+    # Database Session 
     session = models.Session()
     
     layout = [
