@@ -8,3 +8,8 @@ color
 center
 int
 £
+url
+str
+png
+PySimpleGUI
+CDN

@@ -609,7 +609,7 @@ def edit(customerID, orderID):
     subTotal = f'£{order.sub_total}'
     total =  f'£{order.total}'
 
-    # Add this infomation to a dictonary for later
+    # Add this information to a dictionary for later
     moneyInfomation = {
         "sub_total": subTotal,
         "vat": vat,

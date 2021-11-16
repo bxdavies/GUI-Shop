@@ -8,6 +8,8 @@ from PIL import ImageQt
 import requests
 from io import BytesIO
 import textwrap
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 #############
 # Wrap Text #
@@ -22,8 +24,13 @@ def wrapText(text, size=30):
     Returns:
         A string with newlines in (str)
     '''
-
-    return "\n".join(textwrap.wrap(text, size))
+    if type(text) is list:
+        newText = []
+        for i in text:
+            newText.append("\n".join(textwrap.wrap(i, size)))
+        return newText
+    else:
+        return "\n".join(textwrap.wrap(text, size))
 
 ################
 # URL To Image #
@@ -526,3 +533,48 @@ def addCategory():
                 listCategories()
     window.close()
 
+def dataVisualization():
+    
+    # Database Session 
+    session = models.Session()
+
+    subOrders = session.query(models.SubOrder).all()
+
+    productsCount = []
+    for subOrder in subOrders:
+        if subOrder.product_quantity > 1:
+            for i in range(subOrder.product_quantity):
+                productsCount.append(subOrder.product.name)
+        else:
+            productsCount.append(subOrder.product.name)
+
+    my_dict = {i:productsCount.count(i) for i in productsCount}
+
+    keys = wrapText(list(my_dict.keys()), 10)
+    print(keys)
+
+    values =  my_dict.values()
+
+
+    plt.bar(keys, values)
+
+    fig = plt.gcf()
+    def draw_figure(canvas, figure):
+        figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+        figure_canvas_agg.draw()
+        figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+        return figure_canvas_agg
+
+    layout = [[sg.Text('Sales by Product')],
+          [sg.Canvas(key='-CANVAS-')],
+          [sg.Button('Ok')]]
+
+    # create the form and show it without the plot
+    window = sg.Window('Demo Application - Embedding Matplotlib In PySimpleGUI', layout, finalize=True, element_justification='center')
+
+    # add the plot to the window
+    fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+    event, values = window.read()
+
+    window.close()
