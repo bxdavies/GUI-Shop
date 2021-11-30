@@ -14,8 +14,10 @@ import os
 
 Base = declarative_base()
 
+# Create Engine
 engine = create_engine(os.getenv("DATABASE_STRING"), echo=True)
 
+# Create Session Maker
 Session = sessionmaker(bind=engine)
 
 class Customer(Base):
