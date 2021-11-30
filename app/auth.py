@@ -4,6 +4,7 @@
 import PySimpleGUI as sg
 from datetime import datetime
 from password_strength import PasswordPolicy
+
 ################
 # Module Files #
 ################

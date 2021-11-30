@@ -51,10 +51,6 @@ def new(customerID):
 
     Parameters:
         customerID: Customer ID (int)
-
-    Returns:
-        listTimes(): List Times Window
-        main.customerHome(): Customer Home Window
     '''
     # Database Session 
     session = models.Session()
@@ -107,11 +103,6 @@ def listTimes(customerID, newWindow, date, time):
         newWindow: Previous Window object
         date: Booking Date
         time: AM / PM
-
-    Returns:
-        editBooking(): Booking Success so return editBooking
-        new(): User wants to change the date or time so load previous Window
-
     '''
 
     # Database Session 
@@ -219,11 +210,6 @@ def edit(customerID, bookingID):
     Parameters:
         customerID: Customer ID (int)
         bookingID: Booking ID
-
-    Returns:
-        Save Booking Confirmation: Saves the booking to a PDF
-        Cancel Booking: Cancels the booking and returns to the Customer Home window
-        Main Menu:  Returns Customer Home Window
     '''
 
     # Database Session 

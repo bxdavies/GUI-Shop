@@ -11,7 +11,6 @@ import os
 import webbrowser
 from PIL import ImageQt
 import requests
-from io import BytesIO
 import textwrap
 
 ################
@@ -52,7 +51,7 @@ def urlToImage(url):
     response = requests.get(url, stream=True)
     response.raw.decode_content = True
     img = ImageQt.Image.open(response.raw)
-    with BytesIO() as output:
+    with io.BytesIO() as output:
         img.save(output, format="PNG")
         data = output.getvalue()
     return data
@@ -68,11 +67,6 @@ def shop(customerID, category, cart):
         customerID: Customer ID (int)
         category: Category Name (string)
         cart: Customers Shopping Cart (list)
-
-    Returns:
-        Category: Reloads this window passing the category
-        Cart: Shows the Cart window
-        Main Menu: Returns Customer Home Window
     '''
 
     # Database Session 
@@ -229,10 +223,6 @@ def showCart(customerID, cart):
     Parameters:
         customerID: Customer ID (int)
         cart: Customers Shopping Cart (list)
-
-    Returns:
-        Continue Shopping: Returns to the shop window retaining the existing cart contents
-        Chose Collection Time: Returns the Collection Date Selection Window
     '''
 
     # If cart is empty don't show this window
@@ -314,10 +304,6 @@ def collectionDate(customerID, cart):
     Parameters:
         customerID: Customer ID (int)
         cart: Customers Shopping Cart (list)
-
-    Returns:
-        listTimes(): List Times Window
-        main.customerHome(): Customer Home Window
     '''
 
     # Database Session 
@@ -327,7 +313,7 @@ def collectionDate(customerID, cart):
     layout = [
         [sg.Text('New Collection', font='Any 30', justification='center', expand_x=True)],
         [sg.Text('Chose a Date and AM or PM and click Find Times!', justification='center', expand_x=True)],
-        [sg.Input(key='-calendar-'), sg.CalendarButton('Date', key="-calendar-", format='%A %d %B %Y', locale="en_GB.utf8'"), sg.Spin(('AM', 'PM'), key="-time-")],
+        [sg.Input(key='-calendar-', disabled=True), sg.CalendarButton('Date', key="-calendar-", format='%A %d %B %Y', locale="en_GB.utf8'"), sg.Spin(('AM', 'PM'), key="-time-")],
         [sg.Button('Find Times', key="-findtimes-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
@@ -351,6 +337,8 @@ def collectionDate(customerID, cart):
             case "-findtimes-":
                 window.hide()
                 session.close()
+                if values["-calendar-"] == "":
+                    print ("No DateTime")
                 listCollectionTimes(customerID, cart, window, values["-calendar-"], values["-time-"])
 
     window.close()
@@ -368,10 +356,6 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
         newWindow: Previous Window object
         date: Booking Date
         time: AM / PM
-
-    Returns:
-       Main Menu: Returns Customer Home Window
-       Book: Returns Booking Confirmation Window
     '''
 
     # Database Session 
@@ -473,10 +457,6 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
         cart: Customers Shopping Cart (list)
         collectionStart:
         collectionStartEnd:
-
-    Returns:
-        Collect: Saves order to the database and shows order confirmation
-        Main Menu: Returns Customer Home Window
     '''
     
     # Database Session 
@@ -548,9 +528,11 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
                     if cart.count(productID) > 1:
                         product = session.query(models.Product).filter(models.Product.id == productID).first()
                         subOrder = models.SubOrder(order=order, product=product, product_quantity=cart.count(productID))
+                        product.stock = product.stock - cart.count(productID)
                     else:
                         product = session.query(models.Product).filter(models.Product.id == productID).first()
                         subOrder = models.SubOrder(order=order, product=product, product_quantity=1)
+                        product.stock = product.stock - 1
                     session.add(subOrder)
 
                 session.commit()
@@ -571,11 +553,6 @@ def edit(customerID, orderID):
     Parameters:
         customerID: Customer ID (int)
         orderID: Order ID (int)
-    
-    Returns:
-        Save Order Confirmation: Saves the booking to a PDF
-        Cancel Order: Cancels the booking and returns to the Customer Home window
-        Main Menu:  Returns Customer Home Window
     '''
 
     # Database Session 

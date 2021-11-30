@@ -1,3 +1,4 @@
+import math
 import PySimpleGUI as sg
 from app import models, main
 from datetime import datetime
@@ -118,14 +119,14 @@ def qrCodeScanner():
 #################
 # Show Bookings #
 #################
-def showBookings():
-    ''' Show a table of bookings '''
+def showApprovedBookings():
+    ''' Show a table of approved bookings '''
 
     # Database Session 
     session = models.Session()
 
     bookingsList = []
-    bookings = session.query(models.Booking).filter(models.Booking.used == False, models.Booking.booking_datetime >= datetime.now()).order_by(models.Booking.booking_datetime).all()
+    bookings = session.query(models.Booking).filter(models.Booking.booking_datetime >= datetime.now(), models.Booking.used == False, models.Booking.approved == True).order_by(models.Booking.booking_datetime).all()
     for booking in bookings:
         bookingsList.append([booking.id, f'{booking.customer.forename} {booking.customer.surname}', datetime.strftime(booking.booking_datetime, '%A %d %B %Y %H:%M')])
 
@@ -134,7 +135,7 @@ def showBookings():
 
     layout = [
         [sg.Text('Customer Bookings',  font='Any 30', justification='center', expand_x=True)],
-        [sg.Text('All Customer Bookings greater than today.', justification='center', expand_x=True)],
+        [sg.Text('All Customer Bookings greater than today, that have been approved.', justification='center', expand_x=True)],
         [sg.Table(values=bookingsList, headings=['ID', 'Customer Name','Date and Time'], enable_click_events=True, key="-bookings-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
@@ -157,8 +158,48 @@ def showBookings():
                         session.commit()
                         session.close()
                         window.close()
-                        showBookings()
+                        showApprovedBookings()
 
+
+def approveBookings():
+    ''' SHow a table of bookings that needs to be approved'''
+    # Database Session 
+    session = models.Session()
+
+    bookingsList = []
+    bookings = session.query(models.Booking).filter(models.Booking.booking_datetime >= datetime.now(), models.Booking.used == False, models.Booking.approved == False).order_by(models.Booking.booking_datetime).all()
+    for booking in bookings:
+        bookingsList.append([booking.id, f'{booking.customer.forename} {booking.customer.surname}', datetime.strftime(booking.booking_datetime, '%A %d %B %Y %H:%M')])
+
+    if not bookingsList:
+        bookingsList = [['', 'No bookings Found', '']]
+
+    layout = [
+        [sg.Text('Approve Customer Bookings',  font='Any 30', justification='center', expand_x=True)],
+        [sg.Text('All Customer Bookings greater than today, that are are waiting to be improved.', justification='center', expand_x=True)],
+        [sg.Table(values=bookingsList, headings=['ID', 'Customer Name','Date and Time'], enable_click_events=True, key="-bookings-")],
+        [sg.HorizontalSeparator(pad=(10, 10))],
+        [sg.Button('Main Menu', key="-mainmenu-")]
+    ]
+    
+    window = sg.Window('Pharmanet - Staff Bookings', layout)
+
+    while True:
+        event, values = window.read()
+
+        match event:
+            case sg.WIN_CLOSED | "-mainmenu-":
+                window.close()
+                main.staffHome()
+            case _:
+                if isinstance(event, tuple):
+                    if event[2][0] in range(0, len(bookingsList)):
+                        booking = session.query(models.Booking).filter(models.Booking.id == bookingsList[event[2][0]][0]).first()
+                        booking.approved = True
+                        session.commit()
+                        session.close()
+                        window.close()
+                        showApprovedBookings()
 
 def showOrders():
     ''' 
@@ -266,11 +307,6 @@ def listProducts(category):
         customerID: Customer ID (int)
         category: Category Name (string)
         cart: Customers Shopping Cart (list)
-
-    Returns:
-        Category: Reloads this window passing the category
-        Cart: Shows the Cart window
-        Main Menu: Returns Customer Home Window
     '''
 
     # Database Session 
@@ -533,48 +569,95 @@ def addCategory():
                 listCategories()
     window.close()
 
-def dataVisualization():
+def dataVisualization(report = None):
     
     # Database Session 
     session = models.Session()
 
-    subOrders = session.query(models.SubOrder).all()
+    plt.cla()
+    reports = ['Products By Category', 'Most Ordered Products']
 
-    productsCount = []
-    for subOrder in subOrders:
-        if subOrder.product_quantity > 1:
-            for i in range(subOrder.product_quantity):
-                productsCount.append(subOrder.product.name)
-        else:
-            productsCount.append(subOrder.product.name)
+    if report not in reports:
+        report = 'Products By Category'
 
-    my_dict = {i:productsCount.count(i) for i in productsCount}
+    match report:
+        case 'Most Ordered Products':
+            subOrders = session.query(models.SubOrder).all()
 
-    keys = wrapText(list(my_dict.keys()), 10)
-    print(keys)
+            productsCount = []
+            for subOrder in subOrders:
+                if subOrder.product_quantity > 1:
+                    for i in range(subOrder.product_quantity):
+                        productsCount.append(subOrder.product.name)
+                else:
+                    productsCount.append(subOrder.product.name)
 
-    values =  my_dict.values()
+            my_dict = {i:productsCount.count(i) for i in productsCount}
 
+            keys = wrapText(list(my_dict.keys()), 15)
 
-    plt.bar(keys, values)
+            values =  my_dict.values()
+
+            x_pos = [0, 4, 8, 12, 16, 20] #  12, 14, 16]
+
+            plt.bar(x_pos, values, align='center')
+            
+            plt.xticks(x_pos, keys)
+            
+
+        case 'Products By Category':
+            products = session.query(models.Product).all()
+
+            productsList = []
+            for product in products:
+                productsList.append(product.category.name)
+
+            my_dict = {i:productsList.count(i) for i in productsList}
+
+            keys = wrapText(list(my_dict.keys()), 10)
+
+            values =  my_dict.values()
+
+            plt.pie(values, labels=keys)
 
     fig = plt.gcf()
-    def draw_figure(canvas, figure):
+    fig.set_size_inches(12.5, 8.5)
+
+    def drawFigure(canvas, figure):
         figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
         figure_canvas_agg.draw()
         figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
         return figure_canvas_agg
 
-    layout = [[sg.Text('Sales by Product')],
-          [sg.Canvas(key='-CANVAS-')],
-          [sg.Button('Ok')]]
+    layout = [
+        [sg.Text(report)],
+        [sg.Text('Below is the Generated Report')],
+        [sg.Combo(reports, key='-report-', enable_events=True, default_value=report)],
+        [sg.Canvas(key="-canvas-")],
+        [sg.Button('Main Menu', key="-mainmenu-")]
+    ]
 
     # create the form and show it without the plot
-    window = sg.Window('Demo Application - Embedding Matplotlib In PySimpleGUI', layout, finalize=True, element_justification='center')
+    window = sg.Window('Pharmanet - Staff Data Visualisation', layout, finalize=True, element_justification='center')
 
     # add the plot to the window
-    fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+    drawFigure(window["-canvas-"].TKCanvas, fig)
 
-    event, values = window.read()
+    # Handle events
+    while True:
+        event, values = window.read()
 
+        match event:
+
+            # Window Closed
+            case sg.WIN_CLOSED | "-mainmenu-":
+                session.close()
+                window.close()
+                main.staffHome()
+
+            case "-report-":
+                session.close()
+                window.close()
+                dataVisualization(values["-report-"])
+    
     window.close()

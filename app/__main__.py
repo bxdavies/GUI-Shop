@@ -1,7 +1,6 @@
-from app import main, staff
+from app import main
 from dotenv import load_dotenv
 
 if __name__ == "__main__":
     load_dotenv()
-    #main.main()
-    staff.dataVisualization()
+    main.main()

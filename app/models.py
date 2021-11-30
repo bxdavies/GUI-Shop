@@ -77,6 +77,7 @@ class Booking(Base):
     placed_datetime = Column(DateTime(), default=datetime.now(), nullable=False)
     booking_datetime = Column(DateTime(), nullable=False)
     used = Column(Boolean, default=False, nullable=False)
+    approved = Column(Boolean, default=False, nullable=False)
 
     customer = relationship('Customer')
 

@@ -92,7 +92,7 @@ def customerHome(customerID):
     ordersList = []
 
     # Get current customers bookings that are greater than today's date from the Database
-    bookings = session.query(models.Booking).filter(models.Booking.customer == customer, models.Booking.used == False, models.Booking.booking_datetime >= datetime.now()).order_by(models.Booking.booking_datetime).all()
+    bookings = session.query(models.Booking).filter(models.Booking.customer == customer, models.Booking.used == False, models.Booking.booking_datetime >= datetime.now(), models.Booking.approved == True).order_by(models.Booking.booking_datetime).all()
     
     # For each booking in the Database add the details to the bookingsList
     for cBooking in bookings:
@@ -192,9 +192,10 @@ def staffHome():
     # Define Buttons
     buttons = [
         [sg.Button('Scan QR Code', key="-scan-")],
-        [sg.Button('Show Bookings', key="-showbookings-"), sg.Button('Show Orders', key="-showorders-")],
+        [sg.Button('Show Approved Bookings', key="-showbookings-"), sg.Button('Approve Bookings', key="-approvebookings-"),sg.Button('Show Orders', key="-showorders-")],
         [sg.Button('List Products', key="-listproducts-"), sg.Button('List Categories', key="-listcategories-")],
-        [sg.Button('Add Product',key="-addproduct-"), sg.Button('Add Catgeory', key="-addcategory-")]
+        [sg.Button('Add Product',key="-addproduct-"), sg.Button('Add Catgeory', key="-addcategory-")],
+        [sg.Button('Data Visualization', key="-datavisualization-")]
     ]
 
     # Define Window Layout
@@ -227,7 +228,11 @@ def staffHome():
             # Show Bookings Button Press
             case "-showbookings-":
                 window.close()
-                staff.showBookings()
+                staff.showApprovedBookings()
+
+            case "-approvebookings-":
+                window.close()
+                staff.approveBookings()
             
             # Show Order Button Press
             case "-showorders-":
@@ -253,6 +258,10 @@ def staffHome():
             case "-addcategory-":
                 window.close()
                 staff.addCategory()
+            
+            case "-datavisualization-":
+                window.close()
+                staff.dataVisualization()
 
     window.close()
 
