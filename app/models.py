@@ -23,7 +23,7 @@ base = declarative_base()
 #################
 # Create Engine #
 ##################
-engine = create_engine(os.getenv("DATABASE_STRING"), echo=True)
+engine = create_engine(os.getenv("DATABASE_STRING"))
 
 ########################
 # Create Session Maker #
