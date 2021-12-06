@@ -176,6 +176,9 @@ def showApprovedBookings():
                         showApprovedBookings()
 
 
+####################
+# Approve Bookings #
+####################
 def approveBookings():
     ''' SHow a table of bookings that needs to be approved'''
     # Database Session
@@ -222,6 +225,9 @@ def approveBookings():
                         showApprovedBookings()
 
 
+###############
+# Show Orders #
+###############
 def showOrders():
     ''' Show All Customer Orders '''
 
@@ -262,6 +268,9 @@ def showOrders():
     window.close()
 
 
+#################
+# Order Details #
+#################
 def orderDetails(orderID):
     ''' 
     Edit / Show Order
@@ -322,6 +331,9 @@ def orderDetails(orderID):
     window.close()
 
 
+#################
+# List Products #
+#################
 def listProducts(category):
     ''' 
     Shop Window Displaying Products
@@ -510,6 +522,9 @@ def listProducts(category):
     window.close()
 
 
+###################
+# List Categories #
+###################
 def listCategories():
     ''' List all categories '''
 
@@ -554,6 +569,9 @@ def listCategories():
     window.close()
 
 
+###############
+# Add Product #
+###############
 def addProduct():
     ''' Add Product '''
 
@@ -606,6 +624,9 @@ def addProduct():
     window.close()
 
 
+################
+# Add Category #
+################
 def addCategory():
     ''' Add a category '''
 
@@ -641,6 +662,9 @@ def addCategory():
     window.close()
 
 
+######################
+# Data Visualization #
+######################
 def dataVisualization(report=None):
 
     # Database Session
