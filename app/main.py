@@ -7,7 +7,7 @@ from datetime import datetime
 ################
 # Module Files #
 ################
-from app import auth, booking, models, staff, order
+from app import auth, booking, functions, models, staff, order
 
 
 ###############
@@ -35,7 +35,7 @@ def main():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Home', layout)
+    window = sg.Window('Pharmanet - Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -140,7 +140,7 @@ def customerHome(customerID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Customer Home', layout)
+    window = sg.Window('Pharmanet - Customer Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -216,7 +216,7 @@ def staffHome():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Staff Home', layout)
+    window = sg.Window('Pharmanet - Staff Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:

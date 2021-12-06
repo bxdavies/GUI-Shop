@@ -4,7 +4,6 @@
 import PySimpleGUI as sg
 import qrcode
 from datetime import datetime, timedelta
-import io
 import os
 import webbrowser
 import json
@@ -12,35 +11,7 @@ import json
 ################
 # Module Files #
 ################
-from app import models, main, pdf
-
-
-##########################
-# Convert Image to Bytes #
-##########################
-def convertToBytes(img):
-    '''
-    Convert Image to Bytes
-
-    Parameters:
-        img: Image to convert to Bytes
-
-    Returns:
-        bio.getvalue(): Bytes Value
-    '''
-
-    # Internalize a Bytes Object
-    bio = io.BytesIO()
-
-    # Save the image as a PNG
-    img.save(bio, format="PNG")
-
-    # Delete the image
-    del img
-
-    # Return the image Bytes Value
-    return bio.getvalue()
-
+from app import models, main, pdf, functions
 
 ###############
 # New Booking #
@@ -70,7 +41,7 @@ def new(customerID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - New Booking', layout)
+    window = sg.Window('Pharmanet - New Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -167,7 +138,7 @@ def listTimes(customerID, newWindow, date, time):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Booking Times', layout)
+    window = sg.Window('Pharmanet - Booking Times', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -257,14 +228,14 @@ def edit(customerID, bookingID):
         [sg.Text('Booking', font='Any 30', justification='center', expand_x=True)],
         [sg.Text(f'{bookingDateTime}', font='Any 20', justification='center', expand_x=True)],
         [sg.Text('Cancel or Save your booking', justification='center', expand_x=True)],
-        [sg.Image(source=convertToBytes(bookingQRCode), expand_x=True)],
+        [sg.Image(source=functions.convertToBytes(bookingQRCode), expand_x=True)],
         [sg.Frame('', buttons, expand_x=True, relief='flat', element_justification='center')],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Booking', layout)
+    window = sg.Window('Pharmanet - Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:

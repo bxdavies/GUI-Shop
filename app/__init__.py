@@ -7,3 +7,4 @@ from . import booking
 from . import pdf
 from . import staff
 from . import order
+from . import functions

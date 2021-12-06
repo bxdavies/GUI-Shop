@@ -6,65 +6,18 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 import qrcode
 import json
-import io
 import os
 import webbrowser
-from PIL import ImageQt
-import requests
-import textwrap
 
 ################
 # Module Files #
 ################
-from app import models, main, pdf
+from app import models, main, pdf, functions
 
-##########################
-# Convert Image to Bytes #
-##########################
-
-
-def convertToBytes(img):
-    '''
-    Convert Image to Bytes
-
-    Parameters:
-        img: Image to convert to Bytes
-
-    Returns:
-        bio.getvalue(): Bytes Value
-    '''
-
-    # Internalize a Bytes Object
-    bio = io.BytesIO()
-
-    # Save the image as a PNG
-    img.save(bio, format="PNG")
-
-    # Delete the image
-    del img
-
-    # Return the image Bytes Value
-    return bio.getvalue()
-
-
-def wrapText(text, size=30):
-    return "\n".join(textwrap.wrap(text, size))
-
-
-def urlToImage(url):
-    response = requests.get(url, stream=True)
-    response.raw.decode_content = True
-    img = ImageQt.Image.open(response.raw)
-    with io.BytesIO() as output:
-        img.save(output, format="PNG")
-        data = output.getvalue()
-    return data
 
 ########
 # Shop #
 ########
-
-
 def shop(customerID, category, cart):
     ''' 
     Shop Window Displaying Products
@@ -108,10 +61,10 @@ def shop(customerID, category, cart):
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
                 productsCol2.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol2.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol2.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -125,10 +78,10 @@ def shop(customerID, category, cart):
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
                 productsCol1.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol1.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol1.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -157,10 +110,10 @@ def shop(customerID, category, cart):
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
                 productsCol2.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol2.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol2.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -174,10 +127,10 @@ def shop(customerID, category, cart):
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
                 productsCol1.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol1.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol1.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -218,7 +171,7 @@ def shop(customerID, category, cart):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Shop', layout)
+    window = sg.Window('Pharmanet - Shop', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -315,7 +268,7 @@ def showCart(customerID, cart):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Cart', layout)
+    window = sg.Window('Pharmanet - Cart', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -365,7 +318,7 @@ def collectionDate(customerID, cart):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - New Booking', layout)
+    window = sg.Window('Pharmanet - New Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -464,7 +417,7 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Booking Times', layout)
+    window = sg.Window('Pharmanet - Booking Times', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -573,7 +526,7 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Collect Confirmation', layout)
+    window = sg.Window('Pharmanet - Collect Confirmation', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -690,7 +643,7 @@ def edit(customerID, orderID):
         [sg.Text('Order', font='Any 30', justification='center', expand_x=True)],
         [sg.Text(f'{orderDateTime}', font='Any 20', justification='center', expand_x=True)],
         [sg.Text('Cancel or Save your order', justification='center', expand_x=True)],
-        [sg.Image(source=convertToBytes(orderQRCode), expand_x=True)],
+        [sg.Image(source=functions.convertToBytes(orderQRCode), expand_x=True)],
         [sg.Table(orderTable, headings=['Product', 'Price', 'Quantity','Total'], justification='center', expand_x=True)],
         [sg.Frame('', money, expand_x=True, relief='flat', element_justification='center')],
         [sg.Frame('', buttons, expand_x=True, relief='flat', element_justification='center')],
@@ -699,7 +652,7 @@ def edit(customerID, orderID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Booking', layout)
+    window = sg.Window('Pharmanet - Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:

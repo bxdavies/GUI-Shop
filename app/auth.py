@@ -8,7 +8,7 @@ from password_strength import PasswordPolicy
 ################
 # Module Files #
 ################
-from app import models, main
+from app import models, main, functions
 
 ###################
 # Password Policy #
@@ -46,7 +46,7 @@ def login():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Login', layout)
+    window = sg.Window('Pharmanet - Login', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -132,7 +132,7 @@ def signup():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Sign Up', layout)
+    window = sg.Window('Pharmanet - Sign Up', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -236,7 +236,7 @@ def staffLogin():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Login', layout, modal=True)
+    window = sg.Window('Pharmanet - Login', layout, modal=True, icon=functions.getIcon())
 
     # Handle events
     while True:

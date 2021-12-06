@@ -1,26 +1,25 @@
 #############
-# Packages #
+# Libraries #
 #############
 
-# ReportLab Packages #
+# ReportLab Libraries #
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 
-# Other Packages #
+# Other Libraries #
 import io
 import datetime
 
 ################
 # Module Files #
 ################
-from app import models
+from app import models, functions
 
 # Set Styles
 styles = getSampleStyleSheet()
-
 
 ###############################
 # Create Booking Confirmation #
@@ -48,7 +47,7 @@ def createBookingConformation(customerID, fileLocation, bookingDate, bookingTime
         Paragraph('Pharmanet Booking Confirmation', styles['Title']))
 
     # Add Pharmanet Logo
-    logoImage = Image("logo.png", 3*inch, 3*inch)
+    logoImage = Image(functions.getPDFLogo(), 3*inch, 3*inch)
     content.append(logoImage)
 
     # Add Today's Date and Time
@@ -70,9 +69,7 @@ def createBookingConformation(customerID, fileLocation, bookingDate, bookingTime
     content.append(Paragraph(body, styles['Normal']))
 
     # Add QRCode
-    bio = io.BytesIO()
-    bookingQRCode.save(bio, format='PNG')
-    content.append(Image(bio, 2*inch, 2*inch))
+    content.append(Image(functions.convertImage(bookingQRCode), 2*inch, 2*inch))
 
     doc.build(content)
 
@@ -104,7 +101,7 @@ def createOrderConformation(customerID, fileLocation, collectionDate, collection
     content.append(Paragraph('Pharmanet Order Confirmation', styles['Title']))
 
     # Add Pharmanet Logo
-    logoImage = Image("logo.png", 3*inch, 3*inch)
+    logoImage = Image(functions.getPDFLogo(), 3*inch, 3*inch)
     content.append(logoImage)
 
     # Add Today's Date and Time
@@ -126,9 +123,7 @@ def createOrderConformation(customerID, fileLocation, collectionDate, collection
     content.append(Paragraph(body, styles['Normal']))
 
     # Add QRCode
-    bio = io.BytesIO()
-    orderQRCode.save(bio, format='PNG')
-    content.append(Image(bio, 2*inch, 2*inch))
+    content.append(Image(functions.convertImage(orderQRCode), 2*inch, 2*inch))
 
     # Add Table
     tableStyle = TableStyle([

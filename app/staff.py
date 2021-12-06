@@ -6,10 +6,6 @@ from datetime import datetime
 import cv2
 import json
 from decimal import Decimal
-from PIL import ImageQt
-import requests
-from io import BytesIO
-import textwrap
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -17,51 +13,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 ################
 # Module Files #
 ################
-from app import models, main
-
-
-#############
-# Wrap Text #
-##############
-def wrapText(text, size=30):
-    '''
-    Function to convert long strings to warped text
-
-    Parameters:
-        text: The text to convert to warped text (str)
-        size: The max width of a line of text (int)
-    Returns:
-        A string with newlines in (str)
-    '''
-    if type(text) is list:
-        newText = []
-        for i in text:
-            newText.append("\n".join(textwrap.wrap(i, size)))
-        return newText
-    else:
-        return "\n".join(textwrap.wrap(text, size))
-
-
-################
-# URL To Image #
-################
-def urlToImage(url):
-    '''
-    Converts a URL to a PNG Image that PySimpleGUI can understand
-
-    Parameters:
-        url: The url of the image to convert
-
-    Returns:
-        Image Data
-    '''
-    response = requests.get(url, stream=True)
-    response.raw.decode_content = True
-    img = ImageQt.Image.open(response.raw)
-    with BytesIO() as output:
-        img.save(output, format="PNG")
-        data = output.getvalue()
-    return data
+from app import models, main, functions
 
 
 ###################
@@ -82,7 +34,7 @@ def qrCodeScanner():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - QR Code Scanner', layout)
+    window = sg.Window('Pharmanet - QR Code Scanner', layout, icon=functions.getIcon())
 
     cap = cv2.VideoCapture(0)
     detector = cv2.QRCodeDetector()
@@ -155,7 +107,7 @@ def showApprovedBookings():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Staff Bookings', layout)
+    window = sg.Window('Pharmanet - Staff Bookings', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -204,7 +156,7 @@ def approveBookings():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Staff Bookings', layout)
+    window = sg.Window('Pharmanet - Staff Bookings', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -252,7 +204,7 @@ def showOrders():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Staff Bookings', layout)
+    window = sg.Window('Pharmanet - Staff Bookings', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -314,7 +266,8 @@ def orderDetails(orderID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Collect Confirmation', layout)
+    window = sg.Window('Pharmanet - Collect Confirmation', layout, icon=functions.getIcon())
+
     # Handle events
     while True:
 
@@ -374,10 +327,10 @@ def listProducts(category):
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
                 productsCol2.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol2.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol2.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -391,10 +344,10 @@ def listProducts(category):
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
                 productsCol1.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol1.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol1.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -423,10 +376,10 @@ def listProducts(category):
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
                 productsCol2.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol2.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol2.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -440,10 +393,10 @@ def listProducts(category):
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
                 productsCol1.append(
-                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                    [sg.Image(functions.urlToImage(product.image), size=(200, 200))]
                 )
                 productsCol1.append(
-                    [sg.Text(wrapText(product.description, 60))]
+                    [sg.Text(functions.wrapText(product.description, 60))]
                 )
                 productsCol1.append(
                     [sg.Text(product.category.name), sg.Text(product.stock)]
@@ -486,7 +439,7 @@ def listProducts(category):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Shop', layout)
+    window = sg.Window('Pharmanet - Shop', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -546,7 +499,7 @@ def listCategories():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Categories', layout)
+    window = sg.Window('Pharmanet - Categories', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -597,7 +550,7 @@ def addProduct():
         [sg.Button('Main Menu', key="-mainmenu-")],
     ]
 
-    window = sg.Window('Pharmanet - Add Product', layout)
+    window = sg.Window('Pharmanet - Add Product', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -643,7 +596,7 @@ def addCategory():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Add Category', layout)
+    window = sg.Window('Pharmanet - Add Category', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -690,7 +643,7 @@ def dataVisualization(report=None):
 
             my_dict = {i: productsCount.count(i) for i in productsCount}
 
-            keys = wrapText(list(my_dict.keys()), 15)
+            keys = functions.wrapText(list(my_dict.keys()), 15)
 
             values = my_dict.values()
 
@@ -709,7 +662,7 @@ def dataVisualization(report=None):
 
             my_dict = {i: productsList.count(i) for i in productsList}
 
-            keys = wrapText(list(my_dict.keys()), 10)
+            keys = functions.wrapText(list(my_dict.keys()), 10)
 
             values = my_dict.values()
 
@@ -734,7 +687,7 @@ def dataVisualization(report=None):
 
     # create the form and show it without the plot
     window = sg.Window('Pharmanet - Staff Data Visualisation',
-                       layout, finalize=True, element_justification='center')
+                       layout, finalize=True, element_justification='center', icon=functions.getIcon())
 
     # add the plot to the window
     drawFigure(window["-canvas-"].TKCanvas, fig)
