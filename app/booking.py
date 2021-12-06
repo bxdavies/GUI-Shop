@@ -52,15 +52,16 @@ def new(customerID):
     Parameters:
         customerID: Customer ID (int)
     '''
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Get Customer
-    customer = session.query(models.Customer).filter(models.Customer.id == customerID).first()
+    customer = session.query(models.Customer).filter(
+        models.Customer.id == customerID).first()
 
     # Define Window Layout
     layout = [
-        [sg.Text('New Booking', font='Any 30', justification='center', expand_x=True)],
+        [sg.Text('New Booking', font='Any 30',justification='center', expand_x=True)],
         [sg.Text('Chose a Date and AM or PM and click Find Times!', justification='center', expand_x=True)],
         [sg.Input(key='-calendar-'), sg.CalendarButton('Date', key="-calendar-", format='%A %d %B %Y', locale="en_GB.utf8'"), sg.Spin(('AM', 'PM'), key="-time-")],
         [sg.Button('Find Times', key="-findtimes-")],
@@ -86,7 +87,8 @@ def new(customerID):
             case "-findtimes-":
                 window.hide()
                 session.close()
-                listTimes(customerID, window, values["-calendar-"], values["-time-"])
+                listTimes(customerID, window,
+                          values["-calendar-"], values["-time-"])
 
     window.close()
 
@@ -105,12 +107,13 @@ def listTimes(customerID, newWindow, date, time):
         time: AM / PM
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Get Customer
-    customer = session.query(models.Customer).filter(models.Customer.id == customerID).first()
-    
+    customer = session.query(models.Customer).filter(
+        models.Customer.id == customerID).first()
+
     # Define variables
     timeslots = []
     timeSlotsEvents = []
@@ -129,7 +132,8 @@ def listTimes(customerID, newWindow, date, time):
         for minute in range(0, 60, 10):
 
             # Convert Strings to DateTime objects
-            bookingStart = datetime.strptime(f'{date} {hour}:{minute}', '%A %d %B %Y %H:%M')
+            bookingStart = datetime.strptime(
+                f'{date} {hour}:{minute}', '%A %d %B %Y %H:%M')
             bookingEnd = bookingStart + timedelta(minutes=10)
 
             # Convert DateTime objects to String Times
@@ -137,15 +141,21 @@ def listTimes(customerID, newWindow, date, time):
             bookingEndTime = datetime.strftime(bookingEnd, '%H:%M')
 
             # Query time against the DB
-            booking = session.query(models.Booking).filter(models.Booking.booking_datetime == bookingStart).first()
+            booking = session.query(models.Booking).filter(
+                models.Booking.booking_datetime == bookingStart).first()
 
             # Check if time exists in Query
             if booking is None:
                 eventKey = f"-time{bookingStartTime}-"
                 timeSlotsEvents.append(eventKey)
-                timeslots.append([sg.Text(f'{bookingStartTime} - {bookingEndTime}'), sg.Button('Book', key=eventKey)])
+                timeslots.append(
+                    [sg.Text(f'{bookingStartTime} - {bookingEndTime}'), sg.Button('Book', key=eventKey)]
+                )
+                
             else:
-                timeslots.append([sg.Text(f'{bookingStartTime} - {bookingEndTime}'), sg.Text('Booked')])
+                timeslots.append(
+                    [sg.Text(f'{bookingStartTime} - {bookingEndTime}'), sg.Text('Booked')]
+                )
 
     # Define Window Layout
     layout = [
@@ -184,10 +194,12 @@ def listTimes(customerID, newWindow, date, time):
                 time = time.replace('-', '')
 
                 # Convert to DateTime object
-                bookingStart = datetime.strptime(f'{date} {time}', '%A %d %B %Y %H:%M')
+                bookingStart = datetime.strptime(
+                    f'{date} {time}', '%A %d %B %Y %H:%M')
 
                 # Add to the Database
-                booking = models.Booking(customer_id=customer.id, booking_datetime=bookingStart)
+                booking = models.Booking(
+                    customer_id=customer.id, booking_datetime=bookingStart)
                 session.add(booking)
                 session.commit()
 
@@ -212,14 +224,16 @@ def edit(customerID, bookingID):
         bookingID: Booking ID
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Get booking object from bookingID
-    booking = session.query(models.Booking).filter(models.Booking.id == bookingID).first()
+    booking = session.query(models.Booking).filter(
+        models.Booking.id == bookingID).first()
 
     # Convert Booking Date Time to correctly formatted python DateTime object
-    bookingDateTime = datetime.strftime(booking.booking_datetime, '%A %d %B %Y %H:%M')
+    bookingDateTime = datetime.strftime(
+        booking.booking_datetime, '%A %d %B %Y %H:%M')
 
     # Define JSON for QRCode
     bookingJSON = {
@@ -266,7 +280,8 @@ def edit(customerID, bookingID):
 
             # Cancel Button pressed
             case "-cancel-":
-                session.query(models.Booking).filter(models.Booking.id == bookingID).delete()
+                session.query(models.Booking).filter(
+                    models.Booking.id == bookingID).delete()
                 session.commit()
                 session.close()
                 window.close()
@@ -276,7 +291,13 @@ def edit(customerID, bookingID):
             case "-save-":
                 bookingDate = datetime.strftime(booking.booking_datetime, '%A %d %B %Y')
                 bookingTime = datetime.strftime(booking.booking_datetime, '%H:%M')
-                pdf.createBookingConformation(customerID, values['-save-'], bookingDate, bookingTime, bookingQRCode)
+                pdf.createBookingConformation(
+                    customerID, 
+                    values['-save-'], 
+                    bookingDate, 
+                    bookingTime, 
+                    bookingQRCode
+                )
                 webbrowser.open_new(values['-save-'])
 
     window.close()

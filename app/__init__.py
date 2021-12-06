@@ -1,3 +1,5 @@
+# Imports all the python files in this directory 
+
 from . import auth
 from . import main
 from . import models

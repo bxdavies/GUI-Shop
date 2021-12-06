@@ -1,6 +1,7 @@
-import math
+#############
+# Libraries #
+#############
 import PySimpleGUI as sg
-from app import models, main
 from datetime import datetime
 import cv2
 import json
@@ -12,15 +13,22 @@ import textwrap
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+
+################
+# Module Files #
+################
+from app import models, main
+
+
 #############
 # Wrap Text #
 ##############
 def wrapText(text, size=30):
     '''
-    Function to convert long strings to wraped text
+    Function to convert long strings to warped text
 
     Parameters:
-        text: The text to convert to wraped text (str)
+        text: The text to convert to warped text (str)
         size: The max width of a line of text (int)
     Returns:
         A string with newlines in (str)
@@ -33,13 +41,14 @@ def wrapText(text, size=30):
     else:
         return "\n".join(textwrap.wrap(text, size))
 
+
 ################
 # URL To Image #
 ################
 def urlToImage(url):
     '''
     Converts a URL to a PNG Image that PySimpleGUI can understand
-    
+
     Parameters:
         url: The url of the image to convert
 
@@ -61,7 +70,7 @@ def urlToImage(url):
 def qrCodeScanner():
     ''' Scan a QR Code and display the booking or order '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     layout = [
@@ -71,10 +80,10 @@ def qrCodeScanner():
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
-    
+
     # Create the Window
     window = sg.Window('Pharmanet - QR Code Scanner', layout)
-    
+
     cap = cv2.VideoCapture(0)
     detector = cv2.QRCodeDetector()
 
@@ -97,7 +106,8 @@ def qrCodeScanner():
             dataDict = json.loads(data)
 
             if 'booking' in dataDict:
-                booking = session.query(models.Booking).filter(models.Booking.id == dataDict['booking']).first()
+                booking = session.query(models.Booking).filter(
+                    models.Booking.id == dataDict['booking']).first()
                 booking.collected = True
                 session.commit()
                 nicstring = f"""
@@ -115,20 +125,24 @@ def qrCodeScanner():
 
     window.close()
 
-    
+
 #################
 # Show Bookings #
 #################
 def showApprovedBookings():
     ''' Show a table of approved bookings '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     bookingsList = []
-    bookings = session.query(models.Booking).filter(models.Booking.booking_datetime >= datetime.now(), models.Booking.used == False, models.Booking.approved == True).order_by(models.Booking.booking_datetime).all()
+    bookings = session.query(models.Booking).filter(
+        models.Booking.booking_datetime >= datetime.now(), 
+        models.Booking.used == False, models.Booking.approved == True).order_by(models.Booking.booking_datetime).all()
+    
     for booking in bookings:
-        bookingsList.append([booking.id, f'{booking.customer.forename} {booking.customer.surname}', datetime.strftime(booking.booking_datetime, '%A %d %B %Y %H:%M')])
+        bookingsList.append([booking.id, f'{booking.customer.forename} {booking.customer.surname}', datetime.strftime(
+            booking.booking_datetime, '%A %d %B %Y %H:%M')])
 
     if not bookingsList:
         bookingsList = [['', 'No bookings Found', '']]
@@ -136,11 +150,11 @@ def showApprovedBookings():
     layout = [
         [sg.Text('Customer Bookings',  font='Any 30', justification='center', expand_x=True)],
         [sg.Text('All Customer Bookings greater than today, that have been approved.', justification='center', expand_x=True)],
-        [sg.Table(values=bookingsList, headings=['ID', 'Customer Name','Date and Time'], enable_click_events=True, key="-bookings-")],
+        [sg.Table(values=bookingsList, headings=['ID', 'Customer Name', 'Date and Time'], enable_click_events=True, key="-bookings-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
-    
+
     window = sg.Window('Pharmanet - Staff Bookings', layout)
 
     while True:
@@ -153,7 +167,8 @@ def showApprovedBookings():
             case _:
                 if isinstance(event, tuple):
                     if event[2][0] in range(0, len(bookingsList)):
-                        booking = session.query(models.Booking).filter(models.Booking.id == bookingsList[event[2][0]][0]).first()
+                        booking = session.query(models.Booking).filter(
+                            models.Booking.id == bookingsList[event[2][0]][0]).first()
                         booking.collected = True
                         session.commit()
                         session.close()
@@ -163,13 +178,17 @@ def showApprovedBookings():
 
 def approveBookings():
     ''' SHow a table of bookings that needs to be approved'''
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     bookingsList = []
-    bookings = session.query(models.Booking).filter(models.Booking.booking_datetime >= datetime.now(), models.Booking.used == False, models.Booking.approved == False).order_by(models.Booking.booking_datetime).all()
+    bookings = session.query(models.Booking).filter(
+        models.Booking.booking_datetime >= datetime.now(), 
+        models.Booking.used == False, models.Booking.approved == False).order_by(models.Booking.booking_datetime).all()
+    
     for booking in bookings:
-        bookingsList.append([booking.id, f'{booking.customer.forename} {booking.customer.surname}', datetime.strftime(booking.booking_datetime, '%A %d %B %Y %H:%M')])
+        bookingsList.append([booking.id, f'{booking.customer.forename} {booking.customer.surname}', datetime.strftime(
+            booking.booking_datetime, '%A %d %B %Y %H:%M')])
 
     if not bookingsList:
         bookingsList = [['', 'No bookings Found', '']]
@@ -177,11 +196,11 @@ def approveBookings():
     layout = [
         [sg.Text('Approve Customer Bookings',  font='Any 30', justification='center', expand_x=True)],
         [sg.Text('All Customer Bookings greater than today, that are are waiting to be improved.', justification='center', expand_x=True)],
-        [sg.Table(values=bookingsList, headings=['ID', 'Customer Name','Date and Time'], enable_click_events=True, key="-bookings-")],
+        [sg.Table(values=bookingsList, headings=['ID', 'Customer Name', 'Date and Time'], enable_click_events=True, key="-bookings-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
-    
+
     window = sg.Window('Pharmanet - Staff Bookings', layout)
 
     while True:
@@ -194,33 +213,35 @@ def approveBookings():
             case _:
                 if isinstance(event, tuple):
                     if event[2][0] in range(0, len(bookingsList)):
-                        booking = session.query(models.Booking).filter(models.Booking.id == bookingsList[event[2][0]][0]).first()
+                        booking = session.query(models.Booking).filter(
+                            models.Booking.id == bookingsList[event[2][0]][0]).first()
                         booking.approved = True
                         session.commit()
                         session.close()
                         window.close()
                         showApprovedBookings()
 
-def showOrders():
-    ''' 
-    Show All Customer Orders
-    '''
 
-    # Database Session 
+def showOrders():
+    ''' Show All Customer Orders '''
+
+    # Database Session
     session = models.Session()
 
     ordersList = []
-    orders = session.query(models.Order).filter(models.Order.completed == False).all()
+    orders = session.query(models.Order).filter(
+        models.Order.completed == False).all()
     for order in orders:
-        ordersList.append([order.id, f'{order.customer.forename} {order.customer.surname}', datetime.strftime(order.collection_datetime, '%A %d %B %Y %H:%M')])
-    
+        ordersList.append([order.id, f'{order.customer.forename} {order.customer.surname}', datetime.strftime(
+            order.collection_datetime, '%A %d %B %Y %H:%M')])
+
     if ordersList == []:
-        ordersList= [['', 'No Orders Found', '']]
-    
+        ordersList = [['', 'No Orders Found', '']]
+
     layout = [
         [sg.Text('Customer Orders', font='Any 30', justification='center', expand_x=True)],
-        [sg.Text('Show all customer orders',  justification='center', expand_x=True)],
-        [sg.Table(values=ordersList, headings=['ID', 'Customer Name','Date and Time'], enable_click_events=True, key="-bookings-")],
+        [sg.Text('Show all customer orders', justification='center', expand_x=True)],
+        [sg.Table(values=ordersList, headings=['ID', 'Customer Name', 'Date and Time'], enable_click_events=True, key="-bookings-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
@@ -234,11 +255,12 @@ def showOrders():
             case sg.WIN_CLOSED | "-mainmenu-":
                 window.close()
                 main.staffHome()
-            
+
         if isinstance(event, tuple):
             orderDetails(ordersList[event[2][0]][0])
 
     window.close()
+
 
 def orderDetails(orderID):
     ''' 
@@ -249,21 +271,24 @@ def orderDetails(orderID):
 
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
-    order = session.query(models.Order).filter(models.Order.id == orderID).first()
-    subOrders = session.query(models.SubOrder).filter(models.SubOrder.order == order).all()
+    order = session.query(models.Order).filter(
+        models.Order.id == orderID).first()
+    subOrders = session.query(models.SubOrder).filter(
+        models.SubOrder.order == order).all()
 
     orderTable = []
 
     for subOrder in subOrders:
-        orderTable.append([subOrder.product.name, f'£{subOrder.product.price}' ,subOrder.product_quantity, f'£{subOrder.product.price*subOrder.product_quantity}'])
+        orderTable.append([subOrder.product.name, f'£{subOrder.product.price}',
+                          subOrder.product_quantity, f'£{subOrder.product.price*subOrder.product_quantity}'])
 
     vat = round(order.total * Decimal('0.20'), 2)
     vat = f'VAT: £{vat}'
     subTotal = f'SubTotal: £{order.sub_total}'
-    total =  f'Total: £{order.total}'
+    total = f'Total: £{order.total}'
 
     money = [
         [sg.Text(subTotal), sg.Text(vat), sg.Text(total)]
@@ -281,7 +306,7 @@ def orderDetails(orderID):
 
     # Create the Window
     window = sg.Window('Pharmanet - Collect Confirmation', layout)
-      # Handle events
+    # Handle events
     while True:
 
         event, values = window.read()
@@ -293,11 +318,9 @@ def orderDetails(orderID):
                 session.close()
                 window.close()
                 main.staffHome()
-            
+
     window.close()
 
-
-    
 
 def listProducts(category):
     ''' 
@@ -309,27 +332,26 @@ def listProducts(category):
         cart: Customers Shopping Cart (list)
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
-    # Window Variables 
+    # Window Variables
     productsCol1 = []
     productsCol2 = []
     productIDs = []
 
-
-    # Get a list of categories 
+    # Get a list of categories
     categories = ['All']
     for acategory in session.query(models.Category).all():
         categories.append(acategory.name)
 
     # Category is None or all so show all products
     if category is None or category == 'All':
-        
+
         # Query Database for all Products
         products = session.query(models.Product).all()
 
-        # Loop through products and add to columns 
+        # Loop through products and add to columns
         for product in products:
             productIDs.append(product.id)
 
@@ -339,28 +361,46 @@ def listProducts(category):
                 # Add Product Details to Product Column 2
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
-                productsCol2.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol2.append([sg.Text(wrapText(product.description, 60))])
-                productsCol2.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol2.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
+                productsCol2.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol2.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol2.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol2.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
             else:
 
                 # Add Product Details to Product Column 1
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
-                productsCol1.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol1.append([sg.Text(wrapText(product.description, 60))])
-                productsCol1.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol1.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
-                
-    # Show products based on Category provided 
+                productsCol1.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol1.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol1.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol1.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
+
+    # Show products based on Category provided
     else:
 
         # Query Database for Category and Product
-        category = session.query(models.Category).filter(models.Category.name == category).first()
-        products = session.query(models.Product).filter(models.Product.category == category).all()
-        
-        # Loop through products and add to columns 
+        category = session.query(models.Category).filter(
+            models.Category.name == category).first()
+        products = session.query(models.Product).filter(
+            models.Product.category == category).all()
+
+        # Loop through products and add to columns
         for product in products:
 
             # If product ID is an even number then add to Column 2 if its not add to Column 1
@@ -370,19 +410,35 @@ def listProducts(category):
                 # Add Product Details to Product Column 2
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
-                productsCol2.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol2.append([sg.Text(wrapText(product.description, 60))])
-                productsCol2.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol2.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
+                productsCol2.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol2.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol2.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol2.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
             else:
 
                 # Add Product Details to Product Column 1
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
-                productsCol1.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol1.append([sg.Text(wrapText(product.description, 60))])
-                productsCol1.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol1.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
+                productsCol1.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol1.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol1.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol1.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
 
     # Set Category Display Name and Description if Category is included
     if category is None or category == 'All':
@@ -399,12 +455,13 @@ def listProducts(category):
     ]
 
     # Define Cart Column Layout
-    cartCol =  [
-        
+    cartCol = [
+
     ]
 
     productsCol = [
-        [sg.Column(productsCol1, key="-productsCol1-",vertical_scroll_only=True ,expand_x=True, element_justification='center', vertical_alignment='top'), sg.Column(productsCol2, vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top')],
+        [sg.Column(productsCol1, key="-productsCol1-", vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top'),
+         sg.Column(productsCol2, vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top')],
     ]
 
     # Define Window Layout
@@ -430,19 +487,20 @@ def listProducts(category):
                 session.close()
                 window.close()
                 main.staffHome()
-            
+
             # Category Drop Down Changed
             case "-category-":
                 session.close()
                 window.close()
                 listProducts(values["-category-"])
-            
+
             # Add to Cart Button Pressed for a Product
             case productIDs:
                 productID = event.replace('product', '')
                 productID = productID.replace('-', '')
                 session.execute('SET FOREIGN_KEY_CHECKS = 0')
-                session.query(models.Product).filter(models.Product.id == productID).delete()
+                session.query(models.Product).filter(
+                    models.Product.id == productID).delete()
                 session.execute('SET FOREIGN_KEY_CHECKS = 1')
                 session.commit()
                 session.close()
@@ -450,6 +508,7 @@ def listProducts(category):
                 listProducts(None)
 
     window.close()
+
 
 def listCategories():
     ''' List all categories '''
@@ -460,13 +519,15 @@ def listCategories():
 
     categories = session.query(models.Category).all()
     for category in categories:
-        categoriesList.append([category.id, category.name, category.description ])
+        categoriesList.append(
+            [category.id, category.name, category.description]
+        )
 
     if categoriesList == []:
-        categoriesList = [ ['.', '', 'No categories found']]
-    
+        categoriesList = [['.', '', 'No categories found']]
+
     layout = [
-        [sg.Table(values=categoriesList, headings=['ID', 'Name', 'Description'], enable_click_events=True, key="-bookings-")],
+        [sg.Table(values=categoriesList, headings=['ID', 'Name','Description'], enable_click_events=True, key="-bookings-")],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
@@ -483,7 +544,8 @@ def listCategories():
         if isinstance(event, tuple):
             if event[2][0] in range(0, len(categoriesList)):
                 print(categoriesList[event[2][0]][0])
-                session.query(models.Category).filter(models.Category.id ==  categoriesList[event[2][0]][0]).delete()
+                session.query(models.Category).filter(
+                    models.Category.id == categoriesList[event[2][0]][0]).delete()
                 session.commit()
                 session.close()
                 window.close()
@@ -491,10 +553,11 @@ def listCategories():
 
     window.close()
 
+
 def addProduct():
     ''' Add Product '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     categories = []
@@ -526,22 +589,29 @@ def addProduct():
                 window.close()
                 main.staffHome()
             case "-add-":
-                category = session.query(models.Category).filter(models.Category.name == values["-category-"]).first()
-                product = models.Product(name=values["-name-"], description=values["-description-"], image=values["-image-"], price=values["-price-"], category=category, stock=values["-stock-"])
+                category = session.query(models.Category).filter(
+                    models.Category.name == values["-category-"]).first()
+                product = models.Product(
+                    name=values["-name-"], 
+                    description=values["-description-"],
+                    image=values["-image-"], 
+                    price=values["-price-"], 
+                    category=category, 
+                    stock=values["-stock-"]
+                )
                 session.add(product)
                 session.commit()
                 window.close()
                 listProducts(None)
     window.close()
 
-     
 
 def addCategory():
     ''' Add a category '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
-    
+
     layout = [
         [sg.Text('Add Category', font='Any 30', justification='center', expand_x=True)],
         [sg.Text('Fill out the form and click Add!', justification='center', expand_x=True)],
@@ -562,16 +632,18 @@ def addCategory():
                 window.close()
                 main.staffHome()
             case "-add-":
-                category = models.Category(name=values["-name-"], description=values["-description-"])
+                category = models.Category(
+                    name=values["-name-"], description=values["-description-"])
                 session.add(category)
                 session.commit()
                 window.close()
                 listCategories()
     window.close()
 
-def dataVisualization(report = None):
-    
-    # Database Session 
+
+def dataVisualization(report=None):
+
+    # Database Session
     session = models.Session()
 
     plt.cla()
@@ -592,18 +664,17 @@ def dataVisualization(report = None):
                 else:
                     productsCount.append(subOrder.product.name)
 
-            my_dict = {i:productsCount.count(i) for i in productsCount}
+            my_dict = {i: productsCount.count(i) for i in productsCount}
 
             keys = wrapText(list(my_dict.keys()), 15)
 
-            values =  my_dict.values()
+            values = my_dict.values()
 
-            x_pos = [0, 4, 8, 12, 16, 20] #  12, 14, 16]
+            x_pos = [0, 4, 8, 12, 16, 20]
 
             plt.bar(x_pos, values, align='center')
-            
+
             plt.xticks(x_pos, keys)
-            
 
         case 'Products By Category':
             products = session.query(models.Product).all()
@@ -612,11 +683,11 @@ def dataVisualization(report = None):
             for product in products:
                 productsList.append(product.category.name)
 
-            my_dict = {i:productsList.count(i) for i in productsList}
+            my_dict = {i: productsList.count(i) for i in productsList}
 
             keys = wrapText(list(my_dict.keys()), 10)
 
-            values =  my_dict.values()
+            values = my_dict.values()
 
             plt.pie(values, labels=keys)
 
@@ -638,7 +709,8 @@ def dataVisualization(report = None):
     ]
 
     # create the form and show it without the plot
-    window = sg.Window('Pharmanet - Staff Data Visualisation', layout, finalize=True, element_justification='center')
+    window = sg.Window('Pharmanet - Staff Data Visualisation',
+                       layout, finalize=True, element_justification='center')
 
     # add the plot to the window
     drawFigure(window["-canvas-"].TKCanvas, fig)
@@ -659,5 +731,5 @@ def dataVisualization(report = None):
                 session.close()
                 window.close()
                 dataVisualization(values["-report-"])
-    
+
     window.close()

@@ -10,16 +10,16 @@ from password_strength import PasswordPolicy
 ################
 from app import models, main
 
-# Database Session #
-session = models.Session()
-
-
+###################
+# Password Policy #
+###################
 policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
-    uppercase=1,  # need min. 2 uppercase letters
+    uppercase=1,  # need min. 1 uppercase letters
     numbers=2,  # need min. 2 digits
-    special=1,  # need min. 2 special characters
-    nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
+    special=1,  # need min. 1 special characters
+    # need min. 2 non-letter characters (digits, specials, anything)
+    nonletters=2,
 )
 
 
@@ -29,13 +29,16 @@ policy = PasswordPolicy.from_names(
 def login():
     ''' Customer Login Window '''
 
+    # Database Session #
+    session = models.Session()
+
     # Define Window Layout
     layout = [
         [sg.Text('Login', font='Any 30', justification='center', expand_x=True)],
         [sg.Text('Please login using your email address and password...', justification='center', expand_x=True)],
         [sg.Text('Email Address:', size=(22, 1)), sg.InputText(key="-emailaddress-", size=(40, 1))],
         [sg.Text('Date of Birth (DD MM YY):', size=(22, 1)), sg.Input(key="-dob-", size=(30, 1)), sg.CalendarButton('Date', format='%d %m %Y', locale="en_GB.utf8'")],
-        [sg.Text('Password:', size=(22, 1)), sg.InputText(key="-password-", size=(40, 1) ,password_char='*')],
+        [sg.Text('Password:', size=(22, 1)), sg.InputText(key="-password-", size=(40, 1), password_char='*')],
         [sg.Text('', key="-error-", text_color='red')],
         [sg.Button('Login!', key='-login-')],
         [sg.HorizontalSeparator(pad=(10, 10))],
@@ -53,6 +56,7 @@ def login():
 
             # Window Closed
             case sg.WIN_CLOSED | "-welcome-":
+                session.close()
                 window.close()
                 main.main()
 
@@ -70,23 +74,26 @@ def login():
                 # Query the Database and check if customer exists and passwords match
                 else:
                     window["-error-"].update('')
-                    customer = session.query(models.Customer).filter(models.Customer.email_address == values["-emailaddress-"]).first()
+                    customer = session.query(models.Customer).filter(
+                        models.Customer.email_address == values["-emailaddress-"]).first()
 
                     # Check if customer exists
                     if customer is not None:
-                        
+
                         # Convert user input date to date object
-                        dob = datetime.strptime(values["-dob-"], '%d %m %Y').date()
-                        
+                        dob = datetime.strptime(
+                            values["-dob-"], '%d %m %Y').date()
+
                         # If passwords match then show the Customer Home window
                         if customer.checkPassword(values["-password-"]) and customer.dob == dob:
+                            session.close()
                             window.close()
                             main.customerHome(customer.id)
 
                         # If date does not match then show an error
                         elif customer.dob != dob:
                             window["-error-"].update('Your DOB is incorrect!')
-                        
+
                         # If passwords don't match then show an error
                         elif customer.checkPassword(values["-password-"]) is False:
                             window["-error-"].update('Your password is incorrect!')
@@ -95,6 +102,7 @@ def login():
                     else:
                         window["-error-"].update('No Account found with that Email Address!')
 
+    session.close()
     window.close()
 
 
@@ -103,6 +111,9 @@ def login():
 ####################
 def signup():
     ''' Customer Sign Up Window '''
+
+    # Database Session #
+    session = models.Session()
 
     errors = []
     # Define Window Layout
@@ -131,6 +142,7 @@ def signup():
 
             # Window Closed
             case sg.WIN_CLOSED | "-welcome-":
+                session.close()
                 window.close()
                 main.main()
 
@@ -155,7 +167,7 @@ def signup():
                         if f'Enter your {valueName.capitalize()}!' in errors:
                             errors.remove(f'Enter your {valueName.capitalize()}!')
                             window["-error-"].update("\n".join(errors))
-                    
+
                     # Check password strength
                     passwordStrength = policy.test(values["-password-"])
 
@@ -170,7 +182,7 @@ def signup():
                         if 'Password is not complex enough!' not in errors:
                             errors.append('Password is not complex enough!')
                             window["-error-"].update("\n".join(errors))
-                        
+
                     # If passwords do not match show an error
                     if values["-password-"] != values["-confirmpassword-"]:
                         if 'Passwords do not match!' not in errors:
@@ -185,13 +197,20 @@ def signup():
 
                 # If there are no errors then add Customer to the Database
                 if not errors:
-                    customer = models.Customer(forename=values["-forename-"], surname=values["-surname-"], email_address=values["-emailaddress-"], dob=datetime.strptime(values["-dob-"], '%d %m %Y'))
+                    customer = models.Customer(
+                        forename=values["-forename-"], 
+                        surname=values["-surname-"],
+                        email_address=values["-emailaddress-"], 
+                        dob=datetime.strptime(values["-dob-"], '%d %m %Y')
+                    )
                     customer.setPassword(values["-password-"])
                     session.add(customer)
                     session.commit()
+                    session.close()
                     window.close()
                     sg.PopupOK('Account Created!')
                     main.main()
+    session.close()
     window.close()
 
 
@@ -200,6 +219,9 @@ def signup():
 ###############
 def staffLogin():
     ''' Staff Login Window '''
+
+    # Database Session #
+    session = models.Session()
 
     # Define Window Layout
     layout = [
@@ -224,6 +246,7 @@ def staffLogin():
 
             # Window Closed
             case sg.WIN_CLOSED | "-welcome-":
+                session.close()
                 window.close()
                 main.main()
 
@@ -241,22 +264,27 @@ def staffLogin():
                 # Query the Database and check if Staff Member exists and passwords match
                 else:
                     window["-error-"].update('')
-                    staff = session.query(models.Staff).filter(models.Staff.id == values["-id-"]).first()
+                    staff = session.query(models.Staff).filter(
+                        models.Staff.id == values["-id-"]).first()
 
                     # Check if staff Member exists
                     if staff is not None:
 
                         # If passwords match then show Staff Home Window
                         if staff.checkPassword(values["-password-"]):
+                            session.close()
                             window.close()
                             main.staffHome()
 
                         # If passwords don't match then show an error
                         else:
-                            window["-error-"].update('Your password is incorrect!')
+                            window["-error-"].update(
+                                'Your password is incorrect!')
 
                     # If staff Member does not exist show an error
                     else:
-                        window["-error-"].update('No Account found with that Email Address!')
+                        window["-error-"].update(
+                            'No Account found with that Email Address!')
 
+    session.close()
     window.close()

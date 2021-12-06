@@ -10,14 +10,13 @@ from datetime import datetime
 from app import auth, booking, models, staff, order
 
 
-
 ###############
 # Main Window #
 ###############
 def main():
     ''' Main Window, First window to display '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Define Buttons Frame
@@ -25,7 +24,7 @@ def main():
         [sg.Button('Login', key="-login-"), sg.Button('Sign Up', key="-signup-")],
         [sg.Button('Staff Login', key="-stafflogin-")]
     ]
-    
+
     # Define Window Layout
     layout = [
         [sg.Text('Pharmanet', font='Any 30', justification='center', expand_x=True)],
@@ -76,37 +75,42 @@ def main():
 def customerHome(customerID):
     ''' 
     Customer Home 
-    
+
     Parameters:
         customerID: Customer ID (int)
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Get Customer
-    customer = session.query(models.Customer).filter(models.Customer.id == customerID).first()
-    
+    customer = session.query(models.Customer).filter(
+        models.Customer.id == customerID).first()
+
     # Window Variables
     bookingsList = []
     ordersList = []
 
     # Get current customers bookings that are greater than today's date from the Database
-    bookings = session.query(models.Booking).filter(models.Booking.customer == customer, models.Booking.used == False, models.Booking.booking_datetime >= datetime.now(), models.Booking.approved == True).order_by(models.Booking.booking_datetime).all()
-    
+    bookings = session.query(models.Booking).filter(models.Booking.customer == customer, models.Booking.used == False,
+                                                    models.Booking.booking_datetime >= datetime.now(), models.Booking.approved == True).order_by(models.Booking.booking_datetime).all()
+
     # For each booking in the Database add the details to the bookingsList
     for cBooking in bookings:
-        bookingsList.append([cBooking.id,  datetime.strftime(cBooking.booking_datetime, '%A %d %B %Y %H:%M')])
+        bookingsList.append([cBooking.id,  datetime.strftime(
+            cBooking.booking_datetime, '%A %d %B %Y %H:%M')])
 
     # If bookingList is empty add an error
     if not bookingsList:
         bookingsList = [['No bookings Found', 'Hello']]
 
     #
-    orders = session.query(models.Order).filter(models.Order.customer == customer and models.Order.completed == False).all()
-    
+    orders = session.query(models.Order).filter(
+        models.Order.customer == customer and models.Order.completed == False).all()
+
     for cOrder in orders:
-        ordersList.append([cOrder.id, datetime.strftime(cOrder.collection_datetime, '%A %d %B %Y %H:%M'), f'£{cOrder.total}'])
+        ordersList.append([cOrder.id, datetime.strftime(
+            cOrder.collection_datetime, '%A %d %B %Y %H:%M'), f'£{cOrder.total}'])
 
     if not ordersList:
         ordersList = ['.', 'No Orders Found', '.']
@@ -117,12 +121,14 @@ def customerHome(customerID):
         [sg.Table(values=bookingsList, headings=['ID', 'Date Time'], enable_click_events=True, key="-bookings-")],
         [sg.Button('New Booking', key="-newbooking-")]
     ]
+
     # Define Col2
     col2 = [
         [sg.Text('Orders', justification='center', expand_x=True)],
         [sg.Table(values=ordersList, headings=['ID', 'Date Time', 'Total'], enable_click_events=True, key="-orders-")],
         [sg.Button('Shop', key="-shop-")]
     ]
+
     # Define Window Layout
     layout = [
         [sg.Text('Customer Home', font='Any 30', justification='center', expand_x=True)],
@@ -147,7 +153,7 @@ def customerHome(customerID):
                 window.close()
                 session.close()
                 quit()
-            
+
             # New Booking Button Pressed
             case "-newbooking-":
                 session.close()
@@ -164,7 +170,7 @@ def customerHome(customerID):
         if isinstance(event, tuple):
 
             match event[0]:
-                
+
                 # If event key is bookings then show booking
                 case "-bookings-":
                     if event[2][0] in range(0, len(bookingsList)):
@@ -174,27 +180,29 @@ def customerHome(customerID):
 
                 # If event key is orders then show order
                 case "-orders-":
-                        if event[2][0] in range(0, len(ordersList)):
-                            session.close()
-                            window.close()
-                            order.edit(customerID, ordersList[event[2][0]][0])
+                    if event[2][0] in range(0, len(ordersList)):
+                        session.close()
+                        window.close()
+                        order.edit(customerID, ordersList[event[2][0]][0])
 
-        
-                      
     window.close()
 
 ##############
 # Staff Home #
 ##############
+
+
 def staffHome():
     ''' Staff Home Window '''
 
     # Define Buttons
     buttons = [
         [sg.Button('Scan QR Code', key="-scan-")],
-        [sg.Button('Show Approved Bookings', key="-showbookings-"), sg.Button('Approve Bookings', key="-approvebookings-"),sg.Button('Show Orders', key="-showorders-")],
-        [sg.Button('List Products', key="-listproducts-"), sg.Button('List Categories', key="-listcategories-")],
-        [sg.Button('Add Product',key="-addproduct-"), sg.Button('Add Catgeory', key="-addcategory-")],
+        [sg.Button('Show Approved Bookings', key="-showbookings-"), sg.Button('Approve Bookings', key="-approvebookings-"), sg.Button('Show Orders', key="-showorders-")],
+        [sg.Button('List Products', key="-listproducts-"),
+         sg.Button('List Categories', key="-listcategories-")],
+        [sg.Button('Add Product', key="-addproduct-"),
+         sg.Button('Add Category', key="-addcategory-")],
         [sg.Button('Data Visualization', key="-datavisualization-")]
     ]
 
@@ -233,7 +241,7 @@ def staffHome():
             case "-approvebookings-":
                 window.close()
                 staff.approveBookings()
-            
+
             # Show Order Button Press
             case "-showorders-":
                 window.close()
@@ -243,28 +251,24 @@ def staffHome():
             case "-listproducts-":
                 window.close()
                 staff.listProducts(None)
-            
+
             # List Categories Button Press
             case "-listcategories-":
                 window.close()
                 staff.listCategories()
-            
+
             # Add Product Button Press
             case "-addproduct-":
                 window.close()
                 staff.addProduct()
-            
+
             # Add Category Button Press
             case "-addcategory-":
                 window.close()
                 staff.addCategory()
-            
+
             case "-datavisualization-":
                 window.close()
                 staff.dataVisualization()
 
     window.close()
-
-
-
-    

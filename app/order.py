@@ -21,6 +21,8 @@ from app import models, main, pdf
 ##########################
 # Convert Image to Bytes #
 ##########################
+
+
 def convertToBytes(img):
     '''
     Convert Image to Bytes
@@ -44,8 +46,10 @@ def convertToBytes(img):
     # Return the image Bytes Value
     return bio.getvalue()
 
+
 def wrapText(text, size=30):
     return "\n".join(textwrap.wrap(text, size))
+
 
 def urlToImage(url):
     response = requests.get(url, stream=True)
@@ -59,6 +63,8 @@ def urlToImage(url):
 ########
 # Shop #
 ########
+
+
 def shop(customerID, category, cart):
     ''' 
     Shop Window Displaying Products
@@ -69,10 +75,10 @@ def shop(customerID, category, cart):
         cart: Customers Shopping Cart (list)
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
-    # Window Variables 
+    # Window Variables
     productsCol1 = []
     productsCol2 = []
     productIDs = []
@@ -80,18 +86,18 @@ def shop(customerID, category, cart):
     if cart is None:
         cart = []
 
-    # Get a list of categories 
+    # Get a list of categories
     categories = ['All']
     for acategory in session.query(models.Category).all():
         categories.append(acategory.name)
 
     # Category is None or all so show all products
     if category is None or category == 'All':
-        
+
         # Query Database for all Products
         products = session.query(models.Product).all()
 
-        # Loop through products and add to columns 
+        # Loop through products and add to columns
         for product in products:
             productIDs.append(product.id)
 
@@ -101,28 +107,46 @@ def shop(customerID, category, cart):
                 # Add Product Details to Product Column 2
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
-                productsCol2.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol2.append([sg.Text(wrapText(product.description, 60))])
-                productsCol2.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol2.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
+                productsCol2.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol2.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol2.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol2.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
             else:
 
                 # Add Product Details to Product Column 1
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
-                productsCol1.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol1.append([sg.Text(wrapText(product.description, 60))])
-                productsCol1.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol1.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
-                
-    # Show products based on Category provided 
+                productsCol1.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol1.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol1.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol1.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
+
+    # Show products based on Category provided
     else:
 
         # Query Database for Category and Product
-        category = session.query(models.Category).filter(models.Category.name == category).first()
-        products = session.query(models.Product).filter(models.Product.category == category).all()
-        
-        # Loop through products and add to columns 
+        category = session.query(models.Category).filter(
+            models.Category.name == category).first()
+        products = session.query(models.Product).filter(
+            models.Product.category == category).all()
+
+        # Loop through products and add to columns
         for product in products:
 
             # If product ID is an even number then add to Column 2 if its not add to Column 1
@@ -132,19 +156,35 @@ def shop(customerID, category, cart):
                 # Add Product Details to Product Column 2
                 productsCol2.append([sg.HorizontalSeparator()])
                 productsCol2.append([sg.Text(product.name)])
-                productsCol2.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol2.append([sg.Text(wrapText(product.description, 60))])
-                productsCol2.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol2.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
+                productsCol2.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol2.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol2.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol2.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
             else:
 
                 # Add Product Details to Product Column 1
                 productsCol1.append([sg.HorizontalSeparator()])
                 productsCol1.append([sg.Text(product.name)])
-                productsCol1.append([sg.Image(urlToImage(product.image), size=(200, 200))])
-                productsCol1.append([sg.Text(wrapText(product.description, 60))])
-                productsCol1.append([sg.Text(product.category.name), sg.Text(product.stock)])
-                productsCol1.append([sg.Button('Add to Cart', key=f"-product{product.id}-",)])
+                productsCol1.append(
+                    [sg.Image(urlToImage(product.image), size=(200, 200))]
+                )
+                productsCol1.append(
+                    [sg.Text(wrapText(product.description, 60))]
+                )
+                productsCol1.append(
+                    [sg.Text(product.category.name), sg.Text(product.stock)]
+                )
+                productsCol1.append(
+                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                )
 
     # Set Category Display Name and Description if Category is included
     if category is None or category == 'All':
@@ -161,17 +201,17 @@ def shop(customerID, category, cart):
     ]
 
     productsCol = [
-        [sg.Column(productsCol1, key="-productsCol1-" ,expand_x=True, element_justification='center', vertical_alignment='top'), sg.Column(productsCol2, expand_x=True, element_justification='center', vertical_alignment='top')],
+        [sg.Column(productsCol1, key="-productsCol1-", expand_x=True, element_justification='center', vertical_alignment='top'), sg.Column(productsCol2, expand_x=True, element_justification='center', vertical_alignment='top')],
     ]
     # Define Cart Column Layout
-    cartCol =  [
+    cartCol = [
         [sg.Button('', key="-cart-", image_size=(48, 48), image_data=b'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACLklEQVRoge3YTYhNcRjH8Y+bhTCikViiLKyIlcxQM0oWbGjs7GxkzUJZ0DTZ2lDkbUGkpryUWEmTYjRWIyVlISszTJTXsXjOje64zLj//z2jzreexe3cfs/vec7T/zznUFFRUTFbmWyI71hZqqMZcvqXOCuKOFyqoxZ5hqdlm2iFk6aOVbtiIkUBOwuxYQy0MZ7gRYoCOvAZ91OIzYBrGEol9gCfMD+V4DQYwmAqsaNijHpSCU6DV+IkTMImUcCxVIJ/oSbGNlm+uRgXo9QOVoiGHUwpOii6siClaBM2igL6UooeKES3pRRtwq4i19aUomsK0f6Uok2oN2ttauGXEp7Nf6BfFNCZWvgMvoiHW04uFHlqqYX7RGe2pxZu4B5e5xDuxDexq+RkFCO5xIfxMJd4wXvcySU+IOZzUYs6S7ABe3BIrA13xehM4lKL+k3pKRLsmMZ/l4k1ZJ9YCy7jEcZM3f3H8BhXcBxdqY3XmYcPOFH8buzkxcLI+G9Mvi2uXRV3cj96sQpzchlupFO8Zk4U0WjyjdiZzuEI9orVYHG7DDajQ3S9bnoU58UL/26sw8KyzP2N1XgujF/H+nLtzIzl4uXio8TbYbu4JY7N3rKN/AubxdjkfvJm4xS+YmnZRv6VEXF2t/N7UGO0xDvlfZWrR8vUsAXdMuznuXPVcNvPbtxMJdyuXN2m3tJcS1aWXP99ATVxK+uCN+QdoSy5aqITXakEZ0muioqKihb4AbCd8/afwF4IAAAAAElFTkSuQmCC')]
     ]
 
     # Define Window Layout
     layout = [
         [sg.Text('Shop', font='Any 30', justification='center', expand_x=True)],
-        [sg.Column(categoryCol, justification='left', expand_x=True, element_justification='left', vertical_alignment='center',), sg.Column(cartCol, justification='right', expand_y=True, expand_x=True, element_justification='right')],
+        [sg.Column(categoryCol, justification='left', expand_x=True, element_justification='left', vertical_alignment='center',), sg.Column( cartCol, justification='right', expand_y=True, expand_x=True, element_justification='right')],
         [sg.Column(productsCol, size=(800, 800), scrollable=True, vertical_scroll_only=True, expand_x=True, element_justification='center', vertical_alignment='top')],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
@@ -188,22 +228,22 @@ def shop(customerID, category, cart):
 
             # Window Closed
             case sg.WIN_CLOSED | "-mainmenu-":
-               session.close()
-               window.close()
-               main.customerHome(customerID)
-            
+                session.close()
+                window.close()
+                main.customerHome(customerID)
+
             # Category Drop Down Changed
             case "-category-":
                 session.close()
                 window.close()
                 shop(customerID, values["-category-"], cart)
-            
-            # Cart Button Pressed 
+
+            # Cart Button Pressed
             case "-cart-":
                 session.close()
                 window.close()
                 showCart(customerID, cart)
-            
+
             # Add to Cart Button Pressed for a Product
             case productIDs:
                 productID = event.replace('product', '')
@@ -227,31 +267,35 @@ def showCart(customerID, cart):
 
     # If cart is empty don't show this window
     if not cart:
-        sg.popup_auto_close('The cart can not be shown at this time as its empty. \nPlease add something to the cart and try again!', 
-        auto_close_duration=5, title="Cart Error")
+        sg.popup_auto_close('The cart can not be shown at this time as its empty. \nPlease add something to the cart and try again!',
+                            auto_close_duration=5, title="Cart Error")
         shop(customerID, None, None)
-    
-    # Database Session 
+
+    # Database Session
     session = models.Session()
 
-    # Window Variables 
+    # Window Variables
     products = []
     total = 0
-    cartNoDuplicates = list(dict.fromkeys(cart)) # Cart without duplicates
+    cartNoDuplicates = list(dict.fromkeys(cart))  # Cart without duplicates
 
     # Loop through the cart without duplicates
     for productID in cartNoDuplicates:
 
         # If productID appears multiple times in cart then calculate based on Quantity
         if cart.count(productID) > 1:
-            product = session.query(models.Product).filter(models.Product.id == productID).first()
-            products.append([product.name, product.price, cart.count(productID), f'£{product.price*cart.count(productID)}'])
+            product = session.query(models.Product).filter(
+                models.Product.id == productID).first()
+            products.append([product.name, product.price, cart.count(
+                productID), f'£{product.price*cart.count(productID)}'])
             total = total + product.price*cart.count(productID)
-        
+
         # Else a product only appears once in the cart
         else:
-            product = session.query(models.Product).filter(models.Product.id == productID).first()
-            products.append([product.name, product.price, 1, f'£{product.price}'])
+            product = session.query(models.Product).filter(
+                models.Product.id == productID).first()
+            products.append(
+                [product.name, product.price, 1, f'£{product.price}'])
             total = total + product.price
 
     # Calculate VAT
@@ -268,7 +312,6 @@ def showCart(customerID, cart):
         [sg.Button('Chose Collection Time', key='-collection-')],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Continue Shopping', key="-continueshopping-")]
-       
     ]
 
     # Create the Window
@@ -297,6 +340,8 @@ def showCart(customerID, cart):
 ##################
 # New collection #
 ##################
+
+
 def collectionDate(customerID, cart):
     '''
     Create a new Collection
@@ -306,7 +351,7 @@ def collectionDate(customerID, cart):
         cart: Customers Shopping Cart (list)
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Define Window Layout
@@ -338,10 +383,18 @@ def collectionDate(customerID, cart):
                 window.hide()
                 session.close()
                 if values["-calendar-"] == "":
-                    print ("No DateTime")
-                listCollectionTimes(customerID, cart, window, values["-calendar-"], values["-time-"])
+                    print("No DateTime")
+                listCollectionTimes(
+                    customerID, 
+                    cart, 
+                    window,
+                    values["-calendar-"], 
+                    values["-time-"]
+                )
 
     window.close()
+
+
 
 ##############
 # List times #
@@ -358,9 +411,9 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
         time: AM / PM
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
-    
+
     # Define variables
     timeslots = []
     timeSlotsEvents = []
@@ -378,24 +431,28 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
         # Loop through minutes in the hour in 10 minute intervals
         for minute in range(0, 60, 10):
 
-            #Convert Strings to DateTime objects
-            collectionStart = datetime.strptime(f'{date} {hour}:{minute}', '%A %d %B %Y %H:%M')
-            collectionEnd = collectionStart + timedelta(minutes = 10)
+            # Convert Strings to DateTime objects
+            collectionStart = datetime.strptime(
+                f'{date} {hour}:{minute}', '%A %d %B %Y %H:%M')
+            collectionEnd = collectionStart + timedelta(minutes=10)
 
             # Convert DateTime objects to String Times
             collectionStartTime = datetime.strftime(collectionStart, '%H:%M')
             collectionEndTime = datetime.strftime(collectionEnd, '%H:%M')
 
             # Query time against the DB
-            collection = session.query(models.Order).filter(models.Order.collection_datetime == collectionStart).first()
+            collection = session.query(models.Order).filter(
+                models.Order.collection_datetime == collectionStart).first()
 
             # Check if time exists in Query
             if collection is None:
                 eventKey = f"-time{collectionStartTime}-"
                 timeSlotsEvents.append(eventKey)
-                timeslots.append([sg.Text(f'{collectionStartTime} - {collectionEndTime}'), sg.Button('Book', key=eventKey)])
+                timeslots.append([sg.Text(
+                    f'{collectionStartTime} - {collectionEndTime}'), sg.Button('Book', key=eventKey)])
             else:
-                timeslots.append([sg.Text(f'{collectionStartTime} - {collectionEndTime}'), sg.Text('Booked')])
+                timeslots.append(
+                    [sg.Text(f'{collectionStartTime} - {collectionEndTime}'), sg.Text('Booked')])
 
     # Define Window Layout
     layout = [
@@ -434,16 +491,23 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
                 time = time.replace('-', '')
 
                 # Convert to DateTime object
-                collectionStart = datetime.strptime(f'{date} {time}', '%A %d %B %Y %H:%M')
-                collectionEnd = collectionStart + timedelta(minutes = 10)
+                collectionStart = datetime.strptime(
+                    f'{date} {time}', '%A %d %B %Y %H:%M'
+                )
+                collectionEnd = collectionStart + timedelta(minutes=10)
 
-                collectionStartEnd = datetime.strftime(collectionStart, '%A %d %B %Y %H:%M') + ' - ' + datetime.strftime(collectionEnd, '%A %d %Y %H:%M')
-                
+                collectionStartEnd = datetime.strftime(
+                    collectionStart, '%A %d %B %Y %H:%M'
+                ) + ' - ' + datetime.strftime(
+                    collectionEnd, '%A %d %Y %H:%M'
+                )
+        
                 session.close()
                 window.close()
                 collect(customerID, cart, collectionStart, collectionStartEnd)
 
     window.close()
+
 
 #############################
 # Confirm Collection Window #
@@ -451,38 +515,43 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
 def collect(customerID, cart, collectionStart, collectionStartEnd):
     ''' 
     Confirm Order and Collection Time 
-    
+
      Parameters:
         customerID: Customer ID (int)
         cart: Customers Shopping Cart (list)
         collectionStart:
         collectionStartEnd:
     '''
-    
-    # Database Session 
+
+    # Database Session
     session = models.Session()
 
-    # Window Variables 
+    # Window Variables
     products = []
     total = 0
-    cartNoDuplicates = list(dict.fromkeys(cart)) # Cart without duplicates
+    cartNoDuplicates = list(dict.fromkeys(cart))  # Cart without duplicates
 
     # Get Customer
-    customer = session.query(models.Customer).filter(models.Customer.id == customerID).first()
+    customer = session.query(models.Customer).filter(
+        models.Customer.id == customerID).first()
 
     # Loop through the cart without duplicates
     for productID in cartNoDuplicates:
 
         # If productID appears multiple times in cart then calculate based on Quantity
         if cart.count(productID) > 1:
-            product = session.query(models.Product).filter(models.Product.id == productID).first()
-            products.append([product.name, product.price, cart.count(productID), f'£{product.price*cart.count(productID)}'])
+            product = session.query(models.Product).filter(
+                models.Product.id == productID).first()
+            products.append([product.name, product.price, cart.count(
+                productID), f'£{product.price*cart.count(productID)}'])
             total = total + product.price*cart.count(productID)
-        
+
         # Else a product only appears once in the cart
         else:
-            product = session.query(models.Product).filter(models.Product.id == productID).first()
-            products.append([product.name, product.price, 1, f'£{product.price}'])
+            product = session.query(models.Product).filter(
+                models.Product.id == productID).first()
+            products.append(
+                [product.name, product.price, 1, f'£{product.price}'])
             total = total + product.price
 
     # Calculate VAT
@@ -500,7 +569,7 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
         [sg.Button('Collect', key="-collect-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
-       
+
     ]
 
     # Create the Window
@@ -521,17 +590,22 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
 
             # Collect Button Pressed
             case "-collect-":
-                order = models.Order(customer=customer, collection_datetime=collectionStart, sub_total=total, total=total+vat)
+                order = models.Order(
+                    customer=customer, collection_datetime=collectionStart, sub_total=total, total=total+vat)
                 session.add(order)
                 for productID in cartNoDuplicates:
 
                     if cart.count(productID) > 1:
-                        product = session.query(models.Product).filter(models.Product.id == productID).first()
-                        subOrder = models.SubOrder(order=order, product=product, product_quantity=cart.count(productID))
+                        product = session.query(models.Product).filter(
+                            models.Product.id == productID).first()
+                        subOrder = models.SubOrder(
+                            order=order, product=product, product_quantity=cart.count(productID))
                         product.stock = product.stock - cart.count(productID)
                     else:
-                        product = session.query(models.Product).filter(models.Product.id == productID).first()
-                        subOrder = models.SubOrder(order=order, product=product, product_quantity=1)
+                        product = session.query(models.Product).filter(
+                            models.Product.id == productID).first()
+                        subOrder = models.SubOrder(
+                            order=order, product=product, product_quantity=1)
                         product.stock = product.stock - 1
                     session.add(subOrder)
 
@@ -542,6 +616,7 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
                 edit(customerID, orderID)
 
     window.close()
+
 
 ######################
 # Order Confirmation #
@@ -555,14 +630,16 @@ def edit(customerID, orderID):
         orderID: Order ID (int)
     '''
 
-    # Database Session 
+    # Database Session
     session = models.Session()
 
     # Get order object from orderID
-    order = session.query(models.Order).filter(models.Order.id == orderID).first()
+    order = session.query(models.Order).filter(
+        models.Order.id == orderID).first()
 
     # Convert Order Date Time to correctly formatted python DateTime object
-    orderDateTime = datetime.strftime(order.collection_datetime, '%A %d %B %Y %H:%M')
+    orderDateTime = datetime.strftime(
+        order.collection_datetime, '%A %d %B %Y %H:%M')
 
     # Define JSON for QRCode
     orderJSON = {
@@ -573,18 +650,20 @@ def edit(customerID, orderID):
     orderQRCode = qrcode.make(json.dumps(orderJSON))
 
     # Get Order Details
-    subOrders = session.query(models.SubOrder).filter(models.SubOrder.order == order).all()
+    subOrders = session.query(models.SubOrder).filter(
+        models.SubOrder.order == order).all()
 
     # Add Order Details to order table
     orderTable = []
     for subOrder in subOrders:
-        orderTable.append([subOrder.product.name, f'£{subOrder.product.price}' ,subOrder.product_quantity, f'£{subOrder.product.price*subOrder.product_quantity}'])
+        orderTable.append([subOrder.product.name, f'£{subOrder.product.price}',
+                          subOrder.product_quantity, f'£{subOrder.product.price*subOrder.product_quantity}'])
 
     # Set VAT, subTotal and Total Variables
     vat = round(order.total * Decimal('0.20'), 2)
     vat = f'£{vat}'
     subTotal = f'£{order.sub_total}'
-    total =  f'£{order.total}'
+    total = f'£{order.total}'
 
     # Add this information to a dictionary for later
     moneyInfomation = {
@@ -612,7 +691,7 @@ def edit(customerID, orderID):
         [sg.Text(f'{orderDateTime}', font='Any 20', justification='center', expand_x=True)],
         [sg.Text('Cancel or Save your order', justification='center', expand_x=True)],
         [sg.Image(source=convertToBytes(orderQRCode), expand_x=True)],
-        [sg.Table(orderTable, headings=['Product', 'Price', 'Quantity', 'Total'], justification='center', expand_x=True)],
+        [sg.Table(orderTable, headings=['Product', 'Price', 'Quantity','Total'], justification='center', expand_x=True)],
         [sg.Frame('', money, expand_x=True, relief='flat', element_justification='center')],
         [sg.Frame('', buttons, expand_x=True, relief='flat', element_justification='center')],
         [sg.HorizontalSeparator(pad=(10, 10))],
@@ -636,8 +715,10 @@ def edit(customerID, orderID):
 
             # Cancel Button pressed
             case "-cancel-":
-                session.query(models.SubOrder).filter(models.SubOrder.order == order).delete()
-                session.query(models.Order).filter(models.Order.id == order.id).delete()
+                session.query(models.SubOrder).filter(
+                    models.SubOrder.order == order).delete()
+                session.query(models.Order).filter(
+                    models.Order.id == order.id).delete()
                 session.commit()
                 session.close()
                 window.close()
@@ -645,9 +726,12 @@ def edit(customerID, orderID):
 
             # Save Button pressed
             case "-save-":
-                collectionDate = datetime.strftime(order.collection_datetime, '%A %d %B %Y')
-                collectionTime = datetime.strftime(order.collection_datetime, '%H:%M')
-                pdf.createOrderConformation(customerID, values['-save-'], collectionDate, collectionTime, orderQRCode, orderTable, moneyInfomation)
+                collectionDate = datetime.strftime(
+                    order.collection_datetime, '%A %d %B %Y')
+                collectionTime = datetime.strftime(
+                    order.collection_datetime, '%H:%M')
+                pdf.createOrderConformation(
+                    customerID, values['-save-'], collectionDate, collectionTime, orderQRCode, orderTable, moneyInfomation)
                 webbrowser.open_new(values['-save-'])
 
     window.close()

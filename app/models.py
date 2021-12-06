@@ -1,26 +1,40 @@
-# SQLAlchemy Packages #
+#############
+# Libraries #
+#############
+
+# SQLAlchemy Libraries #
 from itertools import product
 from sqlalchemy import create_engine, MetaData, Table, Integer, String, \
     Column, DateTime, ForeignKey, Numeric, Boolean, Numeric, Date, Text
-
 from sqlalchemy.orm import relationship, sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 
-# Other Packages #
+# Other Libraries #
 import bcrypt
 from sqlalchemy.sql.sqltypes import Date
 from datetime import datetime
 import os
 
-Base = declarative_base()
+########
+# Base #
+########
+base = declarative_base()
 
-# Create Engine
+#################
+# Create Engine #
+##################
 engine = create_engine(os.getenv("DATABASE_STRING"), echo=True)
 
-# Create Session Maker
+########################
+# Create Session Maker #
+########################
 Session = sessionmaker(bind=engine)
 
-class Customer(Base):
+
+############
+# Customer #
+############
+class Customer(base):
     """ Customer Accounts """
 
     __tablename__ = 'customer'
@@ -29,7 +43,7 @@ class Customer(Base):
     forename = Column(String(35), nullable=False)
     surname = Column(String(35), nullable=False)
     dob = Column(Date(), nullable=False)
-    email_address = Column(String(256), nullable=False) 
+    email_address = Column(String(256), nullable=False)
     password = Column(String(255), nullable=False)
 
     def setPassword(self, password):
@@ -39,7 +53,8 @@ class Customer(Base):
         Parameters:
             password: The password to hash
         '''
-        self.password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        self.password = bcrypt.hashpw(
+            password.encode("utf-8"), bcrypt.gensalt())
 
     def checkPassword(self, password):
         '''
@@ -53,7 +68,11 @@ class Customer(Base):
         '''
         return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
-class Staff(Base):
+
+#########
+# Staff #
+#########
+class Staff(base):
     """ Staff Members """
 
     __tablename__ = 'staff'
@@ -64,26 +83,36 @@ class Staff(Base):
     password = Column(String(255), nullable=False)
 
     def setPassword(self, password):
-        self.password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        self.password = bcrypt.hashpw(
+            password.encode("utf-8"), bcrypt.gensalt())
 
     def checkPassword(self, password):
         return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
-class Booking(Base):
+
+###########
+# Booking #
+###########
+class Booking(base):
     """ Customer Bookings """
 
     __tablename__ = 'booking'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
-    placed_datetime = Column(DateTime(), default=datetime.now(), nullable=False)
+    placed_datetime = Column(
+        DateTime(), default=datetime.now(), nullable=False)
     booking_datetime = Column(DateTime(), nullable=False)
     used = Column(Boolean, default=False, nullable=False)
     approved = Column(Boolean, default=False, nullable=False)
 
     customer = relationship('Customer')
 
-class Product(Base):
+
+###########
+# Product #
+###########
+class Product(base):
     """ Products """
 
     __tablename__ = 'product'
@@ -98,7 +127,11 @@ class Product(Base):
 
     category = relationship('Category')
 
-class Category(Base):
+
+############
+# Category #
+############
+class Category(base):
 
     __tablename__ = 'category'
 
@@ -106,12 +139,17 @@ class Category(Base):
     name = Column(String(100), nullable=False)
     description = Column(Text(), nullable=False)
 
-class Order(Base):
+
+#########
+# Order #
+#########
+class Order(base):
     __tablename__ = 'order'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
-    placed_datetime = Column(DateTime(), default=datetime.now(), nullable=False)
+    placed_datetime = Column(
+        DateTime(), default=datetime.now(), nullable=False)
     collection_datetime = Column(DateTime(), nullable=False)
     sub_total = Column(Numeric(14, 2), nullable=False)
     total = Column(Numeric(14, 2), nullable=False)
@@ -119,7 +157,11 @@ class Order(Base):
 
     customer = relationship('Customer')
 
-class SubOrder(Base):
+
+#############
+# Sub Order #
+#############
+class SubOrder(base):
 
     __tablename__ = 'sub_order'
 
@@ -131,4 +173,8 @@ class SubOrder(Base):
     order = relationship('Order')
     product = relationship('Product')
 
-Base.metadata.create_all(engine)
+
+##############
+# Create All #
+##############
+base.metadata.create_all(engine)
