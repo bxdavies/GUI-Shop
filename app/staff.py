@@ -70,6 +70,8 @@ def qrCodeScanner():
                 sg.popup(nicstring)
                 break
             elif 'order' in dataDict:
+                session.close()
+                window.close()
                 orderDetails(dataDict['order'])
 
         imgbytes = cv2.imencode('.png', frame)[1].tobytes()  # ditto
