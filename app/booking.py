@@ -178,10 +178,42 @@ def listTimes(customerID, newWindow, date, time):
                 bookingID = booking.id
                 session.close()
                 window.close()
-                edit(customerID, bookingID)
+                awaiting(customerID)
 
     window.close()
 
+#################################
+# Booking Awaiting Confirmation #
+#################################
+def awaiting(customerID):
+    ''' 
+    Booking Awaiting Confirmation
+
+    Parameters:
+        customerID: Customer ID (int)
+    
+    '''
+
+    layout = [
+        [sg.Text('Booking Awaiting Confirmation', font='Any 30', justification='center', expand_x=True)],
+        [sg.Text('Thanks for booking!\nYour booking is currently awaiting confirmation from a staff member,\nonce its confirmed it will shop up in the customer home window', font='Any 20', justification='center', expand_x=True)],
+        [sg.Text('You can safely close this window!', justification='center', expand_x=True)],
+        [sg.Button('Main Menu', key="-mainmenu-")]
+    ]
+
+    # Create the Window
+    window = sg.Window('GUI Shop- Booking', layout, icon=functions.getIcon())
+
+    # Handle events
+    while True:
+        event, values = window.read()
+
+        match event:
+
+            # Window Closed or Main Menu button pressed
+            case sg.WIN_CLOSED | "-mainmenu-":
+                window.close()
+                main.customerHome(customerID)
 
 ################
 # Edit Booking #
