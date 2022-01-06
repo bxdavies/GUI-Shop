@@ -54,7 +54,7 @@ def urlToImage(url):
 # Get Icon #
 ############
 def getIcon():
-    response = requests.get('https://raw.githubusercontent.com/bxdavies/pharmanet/main/logo.jpeg', stream=True)
+    response = requests.get('https://raw.githubusercontent.com/bxdavies/GUI-Shop/main/logo.jpeg', stream=True)
     response.raw.decode_content = True
     img = ImageQt.Image.open(response.raw)
     bio = io.BytesIO()
@@ -65,7 +65,7 @@ def getIcon():
 # Get PDF Logo #
 ################
 def getPDFLogo():
-    response = requests.get('https://raw.githubusercontent.com/bxdavies/pharmanet/main/logo.png', stream=True)
+    response = requests.get('https://raw.githubusercontent.com/bxdavies/GUI-Shop/main/logo.png', stream=True)
     response.raw.decode_content = True
     img = ImageQt.Image.open(response.raw)
     bio = io.BytesIO()

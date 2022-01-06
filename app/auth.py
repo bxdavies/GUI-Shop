@@ -46,7 +46,7 @@ def login():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Login', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Login', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -132,7 +132,7 @@ def signup():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Sign Up', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Sign Up', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -236,7 +236,7 @@ def staffLogin():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Login', layout, modal=True, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Login', layout, modal=True, icon=functions.getIcon())
 
     # Handle events
     while True:

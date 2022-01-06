@@ -27,15 +27,15 @@ def main():
 
     # Define Window Layout
     layout = [
-        [sg.Text('Pharmanet', font='Any 30', justification='center', expand_x=True)],
-        [sg.Text('Welcome to Pharmanet, please Login or Sign Up', justification='center', expand_x=True)],
+        [sg.Text('GUI Shop', font='Any 30', justification='center', expand_x=True)],
+        [sg.Text('Welcome to GUI Shop, please Login or Sign Up', justification='center', expand_x=True)],
         [sg.Frame('', buttons, expand_x=True,  relief='flat', element_justification='center')],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Exit', key="-exit-")]
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Home', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -132,7 +132,7 @@ def customerHome(customerID):
     # Define Window Layout
     layout = [
         [sg.Text('Customer Home', font='Any 30', justification='center', expand_x=True)],
-        [sg.Text(f'Hello, {customer.forename} and Welcome to Pharmanet', font='Any 20', justification='center', expand_x=True)],
+        [sg.Text(f'Hello, {customer.forename} and Welcome to GUI Shop', font='Any 20', justification='center', expand_x=True)],
         [sg.Text('From here, create, view and edit Orders or Bookings', justification='center', expand_x=True)],
         [sg.Column(col1), sg.Column(col2)],
         [sg.HorizontalSeparator(pad=(10, 10))],
@@ -140,7 +140,7 @@ def customerHome(customerID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Customer Home', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Customer Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -216,7 +216,7 @@ def staffHome():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Staff Home', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Staff Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:

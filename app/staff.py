@@ -34,7 +34,7 @@ def qrCodeScanner():
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - QR Code Scanner', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- QR Code Scanner', layout, icon=functions.getIcon())
 
     cap = cv2.VideoCapture(0)
     detector = cv2.QRCodeDetector()
@@ -109,7 +109,7 @@ def showApprovedBookings():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Staff Bookings', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Staff Bookings', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -158,7 +158,7 @@ def approveBookings():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Staff Bookings', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Staff Bookings', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -206,7 +206,7 @@ def showOrders():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Staff Bookings', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Staff Bookings', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -268,7 +268,7 @@ def orderDetails(orderID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Collect Confirmation', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Collect Confirmation', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -441,7 +441,7 @@ def listProducts(category):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Shop', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Shop', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -501,7 +501,7 @@ def listCategories():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Categories', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Categories', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -552,7 +552,7 @@ def addProduct():
         [sg.Button('Main Menu', key="-mainmenu-")],
     ]
 
-    window = sg.Window('Pharmanet - Add Product', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Add Product', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -598,7 +598,7 @@ def addCategory():
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
 
-    window = sg.Window('Pharmanet - Add Category', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Add Category', layout, icon=functions.getIcon())
 
     while True:
         event, values = window.read()
@@ -688,7 +688,7 @@ def dataVisualization(report=None):
     ]
 
     # create the form and show it without the plot
-    window = sg.Window('Pharmanet - Staff Data Visualisation',
+    window = sg.Window('GUI Shop- Staff Data Visualisation',
                        layout, finalize=True, element_justification='center', icon=functions.getIcon())
 
     # add the plot to the window

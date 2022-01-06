@@ -30,7 +30,7 @@ def createBookingConformation(customerID, fileLocation, bookingDate, bookingTime
 
     doc = SimpleDocTemplate(
         fileLocation,
-        title='Pharmanet Booking Confirmation',
+        title='GUI ShopBooking Confirmation',
         pagesize=letter,
         rightMargin=72, leftMargin=72,
         topMargin=72, bottomMargin=18
@@ -44,9 +44,9 @@ def createBookingConformation(customerID, fileLocation, bookingDate, bookingTime
 
     # Add Title
     content.append(
-        Paragraph('Pharmanet Booking Confirmation', styles['Title']))
+        Paragraph('GUI ShopBooking Confirmation', styles['Title']))
 
-    # Add Pharmanet Logo
+    # Add GUI ShopLogo
     logoImage = Image(functions.getPDFLogo(), 3*inch, 3*inch)
     content.append(logoImage)
 
@@ -85,7 +85,7 @@ def createOrderConformation(customerID, fileLocation, collectionDate, collection
 
     doc = SimpleDocTemplate(
         fileLocation,
-        title='Pharmanet Order Confirmation',
+        title='GUI ShopOrder Confirmation',
         pagesize=letter,
         rightMargin=72, leftMargin=72,
         topMargin=72, bottomMargin=18
@@ -98,9 +98,9 @@ def createOrderConformation(customerID, fileLocation, collectionDate, collection
         models.Customer.id == customerID).first()
 
     # Add Title
-    content.append(Paragraph('Pharmanet Order Confirmation', styles['Title']))
+    content.append(Paragraph('GUI ShopOrder Confirmation', styles['Title']))
 
-    # Add Pharmanet Logo
+    # Add GUI ShopLogo
     logoImage = Image(functions.getPDFLogo(), 3*inch, 3*inch)
     content.append(logoImage)
 

@@ -41,7 +41,7 @@ def new(customerID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - New Booking', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- New Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -138,7 +138,7 @@ def listTimes(customerID, newWindow, date, time):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Booking Times', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Booking Times', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -235,7 +235,7 @@ def edit(customerID, bookingID):
     ]
 
     # Create the Window
-    window = sg.Window('Pharmanet - Booking', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop- Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
