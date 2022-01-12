@@ -122,7 +122,7 @@ def signup():
         [sg.Text('Please fill in the form to create a new account', justification='center', expand_x=True)],
         [sg.Text('Forename:', size=(22, 1)), sg.InputText(key="-forename-", size=(15, 1)), sg.Text('Surname:', size=(8, 1)), sg.InputText(key="-surname-", size=(15, 1))],
         [sg.Text('Email Address:', size=(22, 1)), sg.InputText(key="-emailaddress-", size=(42, 1))],
-        [sg.Text('Date of Birth (DD MM YY):', size=(22, 1)), sg.Input(key="-dob-", size=(30, 1)), sg.CalendarButton('Date', format='%d %m %Y', locale="en_GB.utf8'")],
+        [sg.Text('Date of Birth (DD MM YY):', size=(22, 1)), sg.Input(key="-dob-", size=(30, 1), disabled=True), sg.CalendarButton('Date', format='%d %m %Y', locale="en_GB.utf8'")],
         [sg.Text('Password:', size=(22, 1)), sg.InputText(key="-password-", size=(42, 1), password_char='*')],
         [sg.Text('Confirm Password:', size=(22, 1)), sg.InputText(key="-confirmpassword-", size=(42, 1), password_char='*')],
         [sg.Text('', key="-error-", text_color='red')],

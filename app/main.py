@@ -102,7 +102,7 @@ def customerHome(customerID):
 
     # If bookingList is empty add an error
     if not bookingsList:
-        bookingsList = [['No bookings Found', 'Hello']]
+        bookingsList = [['.', 'No bookings Found']]
 
     #
     orders = session.query(models.Order).filter(
