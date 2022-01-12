@@ -35,7 +35,7 @@ def main():
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Home', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -140,7 +140,7 @@ def customerHome(customerID):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Customer Home', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Customer Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -216,7 +216,7 @@ def staffHome():
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Staff Home', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Staff Home', layout, icon=functions.getIcon())
 
     # Handle events
     while True:

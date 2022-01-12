@@ -171,7 +171,7 @@ def shop(customerID, category, cart):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Shop', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Shop', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -268,7 +268,7 @@ def showCart(customerID, cart):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Cart', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Cart', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -318,7 +318,7 @@ def collectionDate(customerID, cart):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- New Booking', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - New Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -417,7 +417,7 @@ def listCollectionTimes(customerID, cart, newWindow, date, time):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Booking Times', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Booking Times', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -526,7 +526,7 @@ def collect(customerID, cart, collectionStart, collectionStartEnd):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Collect Confirmation', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Collect Confirmation', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -652,7 +652,7 @@ def edit(customerID, orderID):
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Booking', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Booking', layout, icon=functions.getIcon())
 
     # Handle events
     while True:

@@ -37,7 +37,7 @@ def login():
         [sg.Text('Login', font='Any 30', justification='center', expand_x=True)],
         [sg.Text('Please login using your email address and password...', justification='center', expand_x=True)],
         [sg.Text('Email Address:', size=(22, 1)), sg.InputText(key="-emailaddress-", size=(40, 1))],
-        [sg.Text('Date of Birth (DD MM YY):', size=(22, 1)), sg.Input(key="-dob-", size=(30, 1)), sg.CalendarButton('Date', format='%d %m %Y', locale="en_GB.utf8'")],
+        [sg.Text('Date of Birth (DD MM YY):', size=(22, 1)), sg.Input(key="-dob-", disabled=True, size=(30, 1)), sg.CalendarButton('Date', format='%d %m %Y', locale="en_GB.utf8'")],
         [sg.Text('Password:', size=(22, 1)), sg.InputText(key="-password-", size=(40, 1), password_char='*')],
         [sg.Text('', key="-error-", text_color='red')],
         [sg.Button('Login!', key='-login-')],
@@ -46,7 +46,7 @@ def login():
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Login', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Login', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -132,7 +132,7 @@ def signup():
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Sign Up', layout, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Sign Up', layout, icon=functions.getIcon())
 
     # Handle events
     while True:
@@ -236,7 +236,7 @@ def staffLogin():
     ]
 
     # Create the Window
-    window = sg.Window('GUI Shop- Login', layout, modal=True, icon=functions.getIcon())
+    window = sg.Window('GUI Shop - Login', layout, modal=True, icon=functions.getIcon())
 
     # Handle events
     while True:
