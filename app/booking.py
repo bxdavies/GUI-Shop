@@ -34,7 +34,7 @@ def new(customerID):
     layout = [
         [sg.Text('New Booking', font='Any 30',justification='center', expand_x=True)],
         [sg.Text('Chose a Date and AM or PM and click Find Times!', justification='center', expand_x=True)],
-        [sg.Input(key='-calendar-', disbaled=True), sg.CalendarButton('Date', key="-calendar-", format='%A %d %B %Y', locale="en_GB.utf8'"), sg.Spin(('AM', 'PM'), key="-time-")],
+        [sg.Input(key='-calendar-', disabled=True), sg.CalendarButton('Date', key="-calendar-", format='%A %d %B %Y', locale="en_GB.utf8'"), sg.Spin(('AM', 'PM'), key="-time-")],
         [sg.Button('Find Times', key="-findtimes-")],
         [sg.HorizontalSeparator(pad=(10, 10))],
         [sg.Button('Main Menu', key="-mainmenu-")]
@@ -196,7 +196,7 @@ def awaiting(customerID):
 
     layout = [
         [sg.Text('Booking Awaiting Confirmation', font='Any 30', justification='center', expand_x=True)],
-        [sg.Text('Thanks for booking!\nYour booking is currently awaiting confirmation from a staff member,\nonce its confirmed it will shop up in the customer home window', font='Any 20', justification='center', expand_x=True)],
+        [sg.Text('Thanks for booking!\nYour booking is currently awaiting confirmation from a staff member,\nonce its confirmed it will show up in the customer home window', font='Any 20', justification='center', expand_x=True)],
         [sg.Text('You can safely close this window!', justification='center', expand_x=True)],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
