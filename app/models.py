@@ -43,7 +43,7 @@ class Customer(base):
     forename = Column(String(35), nullable=False)
     surname = Column(String(35), nullable=False)
     dob = Column(Date(), nullable=False)
-    email_address = Column(String(256), nullable=False)
+    email_address = Column(String(256), nullable=False, unique=True)
     password = Column(String(255), nullable=False)
 
     def setPassword(self, password):

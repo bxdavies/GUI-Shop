@@ -173,14 +173,14 @@ def signup():
 
                     # If password strength is empty then remove error from error list
                     if not passwordStrength:
-                        if 'Password is not complex enough!' in errors:
-                            errors.remove('Password is not complex enough!')
+                        if 'Password must be at least 8 characters long and contain 1 uppercase letters, 2 numbers and 1 special character  ' in errors:
+                            errors.remove('Password must be at least 8 characters long and contain 1 uppercase letters, 2 numbers and 1 special character  ')
                             window["-error-"].update("\n".join(errors))
 
                     # If list is not empty then show an error
                     else:
-                        if 'Password is not complex enough!' not in errors:
-                            errors.append('Password is not complex enough!')
+                        if 'Password must be at least 8 characters long and contain 1 uppercase letters, 2 numbers and 1 special character  ' not in errors:
+                            errors.append('Password must be at least 8 characters long and contain 1 uppercase letters, 2 numbers and 1 special character  ')
                             window["-error-"].update("\n".join(errors))
 
                     # If passwords do not match show an error

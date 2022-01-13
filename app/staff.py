@@ -320,6 +320,12 @@ def listProducts(category):
 
         # Loop through products and add to columns
         for product in products:
+
+            # Check if product has category!
+            if product.category == None:
+                sg.PopupError(f'{product.name} does not have category so will not be displayed!')
+                continue
+
             productIDs.append(product.id)
 
             # If product ID is an even number then add to Column 2 if its not add to Column 1
@@ -338,7 +344,7 @@ def listProducts(category):
                     [sg.Text(product.category.name), sg.Text(product.stock)]
                 )
                 productsCol2.append(
-                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                    [sg.Button('Delete Product', key=f"-product{product.id}-",)]
                 )
             else:
 
@@ -355,7 +361,7 @@ def listProducts(category):
                     [sg.Text(product.category.name), sg.Text(product.stock)]
                 )
                 productsCol1.append(
-                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                    [sg.Button('Delete Product', key=f"-product{product.id}-",)]
                 )
 
     # Show products based on Category provided
@@ -387,7 +393,7 @@ def listProducts(category):
                     [sg.Text(product.category.name), sg.Text(product.stock)]
                 )
                 productsCol2.append(
-                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                    [sg.Button('Delete Product', key=f"-product{product.id}-",)]
                 )
             else:
 
@@ -404,7 +410,7 @@ def listProducts(category):
                     [sg.Text(product.category.name), sg.Text(product.stock)]
                 )
                 productsCol1.append(
-                    [sg.Button('Add to Cart', key=f"-product{product.id}-",)]
+                    [sg.Button('Delete Product', key=f"-product{product.id}-",)]
                 )
 
     # Set Category Display Name and Description if Category is included
@@ -497,6 +503,8 @@ def listCategories():
         categoriesList = [['.', '', 'No categories found']]
 
     layout = [
+        [sg.Text('Shop', font='Any 30', justification='center', expand_x=True)],
+        [sg.Text('Click on a category to delete', font='Any 20', justification='center', expand_x=True)],
         [sg.Table(values=categoriesList, headings=['ID', 'Name','Description'], enable_click_events=True, key="-bookings-")],
         [sg.Button('Main Menu', key="-mainmenu-")]
     ]
@@ -513,9 +521,10 @@ def listCategories():
 
         if isinstance(event, tuple):
             if event[2][0] in range(0, len(categoriesList)):
-                print(categoriesList[event[2][0]][0])
+                session.execute('SET FOREIGN_KEY_CHECKS = 0')
                 session.query(models.Category).filter(
                     models.Category.id == categoriesList[event[2][0]][0]).delete()
+                session.execute('SET FOREIGN_KEY_CHECKS = 1')
                 session.commit()
                 session.close()
                 window.close()
@@ -644,12 +653,15 @@ def dataVisualization(report=None):
                     productsCount.append(subOrder.product.name)
 
             my_dict = {i: productsCount.count(i) for i in productsCount}
-
-            keys = functions.wrapText(list(my_dict.keys()), 15)
+            
+            keysList = list(my_dict.keys())
+            keys = functions.wrapText(keysList, 15)
 
             values = my_dict.values()
 
-            x_pos = [0, 4, 8, 12, 16, 20]
+            x_pos = []
+            for i in range(len(keysList)):
+                x_pos.append(i * 4)
 
             plt.bar(x_pos, values, align='center')
 

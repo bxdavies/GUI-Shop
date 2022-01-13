@@ -52,7 +52,7 @@ def new(customerID):
             # Window Closed
             case sg.WIN_CLOSED | "-mainmenu-":
                 session.close()
-                main.customerHome()
+                main.customerHome(customerID)
 
             # Find times button press
             case "-findtimes-":
